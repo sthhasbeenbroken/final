@@ -18,6 +18,7 @@ let lexemeAsString lexbuf =
 let keyword s =   
     match s with
     | "char"    -> CHAR    // 返回对应的Token ,Token 定义于 CPar.fsl 文件中
+    | "bool"    -> BOOL
     | "else"    -> ELSE
     | "false"   -> CSTBOOL 0
     | "if"      -> IF
@@ -58,7 +59,7 @@ rule Token = parse          // 每个 规则rule 会生成为一个函数，函�
                             //  System.Int32.Parse 将 字符串转换为 int 类型
                             // 在 CPar 中  词元CSTINT 的语义值的类型是int  %token <int> CSTINT
                             //  CSTINT 需要一个整数作为参数
-
+  | ("false"|"true")    { CSTBOOL ( System.Boolean.Parse (lexemeAsString lexbuf )   ) }
   | ['a'-'z''A'-'Z']['a'-'z''A'-'Z''0'-'9']*
                     { keyword (lexemeAsString lexbuf) } //标识符处理
                                                        //先查是否是关键字，是则返回对应关键字的Token

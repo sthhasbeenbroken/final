@@ -37,9 +37,14 @@ open Debug
 // [("x",9);("y",8)]: int env
 
 type 'data env = (string * 'data) list
-
 //环境查找函数
 //在环境 env上查找名称为 x 的值
+let BOOLEAN  b =
+    match b with
+    | b ->1
+    | _->0
+
+
 let rec lookup env x =
     match env with
     | [] -> failwith (x + " not found")
@@ -208,6 +213,7 @@ let rec allocate (typ, x) (env0, nextloc) sto0 : locEnv * store =
         //数组 调用 initSto 分配 i 个空间
         | TypA (t, Some i) -> (nextloc + i, nextloc, initSto nextloc i sto0)
         // 常规变量默认值是 0
+        | TypB             -> (nextloc,(BOOLEAN false),sto0)
         | _ -> (nextloc, 0, sto0)
 
     msg $"\nalloc:\n {((typ, x), (env0, nextloc), sto0)}\n"
@@ -298,6 +304,8 @@ and stmtordec stmtordec locEnv gloEnv store =
 
 and eval e locEnv gloEnv store : int * store =
     match e with
+    //添加于抽象方法Absyn
+    | ConstBool b    -> (BOOLEAN b,store)
     | Access acc ->
         let (loc, store1) = access acc locEnv gloEnv store
         (getSto store1 loc, store1)
