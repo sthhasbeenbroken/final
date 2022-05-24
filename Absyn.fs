@@ -1,7 +1,7 @@
 module Absyn
 
 type typ =
-  | TypB 
+  | TypB                             (*TYPE BOOL                    *)
   | TypF
   | TypI                             (* Type int                    *)
   | TypC                             (* Type char                   *)
