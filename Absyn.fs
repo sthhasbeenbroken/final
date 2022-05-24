@@ -39,7 +39,7 @@ and expr =                          // 表达式，右值
   | Sizeof of expr  
   
                                                                    
-and access =                                                       
+and access =                          //左值，存储的位置                              
   | AccVar of string                 (* Variable access        x    *) 
   | AccDeref of expr                 (* Pointer dereferencing  *p   *)
   | AccIndex of access * expr        (* Array indexing         a[e] *)

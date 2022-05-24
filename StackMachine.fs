@@ -1,4 +1,4 @@
-module StackMachine
+module Machine
 
 type label = string
 
