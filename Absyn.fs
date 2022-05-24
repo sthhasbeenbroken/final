@@ -11,7 +11,7 @@ type typ =
   | TypeStruct of string
   | Lambda of  typ option * string * (typ * string) list * stmt
                                                                    
-and expr =    
+and expr =                          // 表达式，右值
   | CreateI of string * int
   | CstI of int   (*constant int*)
   | ConstBool of bool
@@ -19,7 +19,7 @@ and expr =
   | ConstChar of char (*constant char*) 
   | ConstFloat of float32
   | ConstNull                                                     
-  | Access of access                 (* x    or  *p    or  a[e]     *)
+  | Access of access                 (* x    or  *p    or  a[e]     *)//访问左值（右值）
   | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
   | Self of  access * string * expr
   | ToInt of expr
@@ -37,7 +37,6 @@ and expr =
   | PrintHex of int * expr
   | Typeof of expr
   | Sizeof of expr  
-  
   
                                                                    
 and access =                                                       
