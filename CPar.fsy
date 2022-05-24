@@ -206,11 +206,13 @@ Exprs1:
 
 Const:
     CSTINT                              { $1       }
-  | CSTBOOL                             { $1       }
   | MINUS CSTINT                        { - $2     }
   | NULL                                { -1       }
 ;
-
+//单独提出ConstBool之前写在Const中报错
+ConstBool:
+  |  CSTBOOL                             { $1       }
+;
 Type:
     INT                                 { TypI     }
   | CHAR                                { TypC     }
