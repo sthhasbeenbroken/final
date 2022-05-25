@@ -435,20 +435,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 45 "CPar.fsy"
+# 46 "CPar.fsy"
                                                                Prog _1 
                    )
-# 45 "CPar.fsy"
+# 46 "CPar.fsy"
                  : Absyn.program));
 # 443 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 50 "CPar.fsy"
+# 51 "CPar.fsy"
                                                                [] 
                    )
-# 50 "CPar.fsy"
+# 51 "CPar.fsy"
                  : 'gentype_Topdecs));
 # 453 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -457,10 +457,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 51 "CPar.fsy"
+# 52 "CPar.fsy"
                                                                _1 :: _2 
                    )
-# 51 "CPar.fsy"
+# 52 "CPar.fsy"
                  : 'gentype_Topdecs));
 # 465 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -468,10 +468,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 55 "CPar.fsy"
+# 56 "CPar.fsy"
                                                                Vardec (fst _1, snd _1) 
                    )
-# 55 "CPar.fsy"
+# 56 "CPar.fsy"
                  : 'gentype_Topdec));
 # 476 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -479,10 +479,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 56 "CPar.fsy"
+# 57 "CPar.fsy"
                                                                _1 
                    )
-# 56 "CPar.fsy"
+# 57 "CPar.fsy"
                  : 'gentype_Topdec));
 # 487 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -491,10 +491,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 74 "CPar.fsy"
+# 75 "CPar.fsy"
                                                                ((fst _2) _1, snd _2) 
                    )
-# 74 "CPar.fsy"
+# 75 "CPar.fsy"
                  : 'gentype_Vardec));
 # 499 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -502,10 +502,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 85 "CPar.fsy"
+# 86 "CPar.fsy"
                                                                ((fun t -> t), _1)                      
                    )
-# 85 "CPar.fsy"
+# 86 "CPar.fsy"
                  : 'gentype_Vardesc));
 # 510 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -513,10 +513,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 93 "CPar.fsy"
+# 94 "CPar.fsy"
                                                                compose1 TypP _2                        
                    )
-# 93 "CPar.fsy"
+# 94 "CPar.fsy"
                  : 'gentype_Vardesc));
 # 521 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -524,10 +524,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 95 "CPar.fsy"
+# 96 "CPar.fsy"
                                                                _2                                      
                    )
-# 95 "CPar.fsy"
+# 96 "CPar.fsy"
                  : 'gentype_Vardesc));
 # 532 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -535,10 +535,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 97 "CPar.fsy"
+# 98 "CPar.fsy"
                                                                compose1 (fun t -> TypA(t, None)) _1    
                    )
-# 97 "CPar.fsy"
+# 98 "CPar.fsy"
                  : 'gentype_Vardesc));
 # 543 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -547,10 +547,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 99 "CPar.fsy"
+# 100 "CPar.fsy"
                                                                compose1 (fun t -> TypA(t, Some _3)) _1 
                    )
-# 99 "CPar.fsy"
+# 100 "CPar.fsy"
                  : 'gentype_Vardesc));
 # 555 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -560,10 +560,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 104 "CPar.fsy"
+# 105 "CPar.fsy"
                                                                Fundec(None,     _2, _4, _6) 
                    )
-# 104 "CPar.fsy"
+# 105 "CPar.fsy"
                  : 'gentype_Fundec));
 # 568 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -574,20 +574,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 106 "CPar.fsy"
+# 107 "CPar.fsy"
                                                                Fundec(Some(_1), _2, _4, _6) 
                    )
-# 106 "CPar.fsy"
+# 107 "CPar.fsy"
                  : 'gentype_Fundec));
 # 582 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 111 "CPar.fsy"
+# 112 "CPar.fsy"
                                                                [] 
                    )
-# 111 "CPar.fsy"
+# 112 "CPar.fsy"
                  : 'gentype_Paramdecs));
 # 592 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -595,10 +595,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 112 "CPar.fsy"
+# 113 "CPar.fsy"
                                                                _1 
                    )
-# 112 "CPar.fsy"
+# 113 "CPar.fsy"
                  : 'gentype_Paramdecs));
 # 603 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -606,10 +606,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 116 "CPar.fsy"
+# 117 "CPar.fsy"
                                                                [_1]     
                    )
-# 116 "CPar.fsy"
+# 117 "CPar.fsy"
                  : 'gentype_Paramdecs1));
 # 614 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -618,10 +618,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 117 "CPar.fsy"
+# 118 "CPar.fsy"
                                                                _1 :: _3 
                    )
-# 117 "CPar.fsy"
+# 118 "CPar.fsy"
                  : 'gentype_Paramdecs1));
 # 626 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -629,20 +629,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 122 "CPar.fsy"
+# 123 "CPar.fsy"
                                                                Block _2 
                    )
-# 122 "CPar.fsy"
+# 123 "CPar.fsy"
                  : 'gentype_Block));
 # 637 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 126 "CPar.fsy"
+# 127 "CPar.fsy"
                                                                [] 
                    )
-# 126 "CPar.fsy"
+# 127 "CPar.fsy"
                  : 'gentype_StmtOrDecSeq));
 # 647 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -651,10 +651,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 127 "CPar.fsy"
+# 128 "CPar.fsy"
                                                                Stmt _1 :: _2 
                    )
-# 127 "CPar.fsy"
+# 128 "CPar.fsy"
                  : 'gentype_StmtOrDecSeq));
 # 659 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -663,10 +663,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 128 "CPar.fsy"
+# 129 "CPar.fsy"
                                                                Dec (fst _1, snd _1) :: _3 
                    )
-# 128 "CPar.fsy"
+# 129 "CPar.fsy"
                  : 'gentype_StmtOrDecSeq));
 # 671 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -674,10 +674,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 132 "CPar.fsy"
+# 133 "CPar.fsy"
                                                                _1 
                    )
-# 132 "CPar.fsy"
+# 133 "CPar.fsy"
                  : 'gentype_Stmt));
 # 682 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -685,10 +685,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 133 "CPar.fsy"
+# 134 "CPar.fsy"
                                                                _1 
                    )
-# 133 "CPar.fsy"
+# 134 "CPar.fsy"
                  : 'gentype_Stmt));
 # 693 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -696,20 +696,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 137 "CPar.fsy"
+# 138 "CPar.fsy"
                                                                Expr(_1)             
                    )
-# 137 "CPar.fsy"
+# 138 "CPar.fsy"
                  : 'gentype_StmtM));
 # 704 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 138 "CPar.fsy"
+# 139 "CPar.fsy"
                                                                Return None          
                    )
-# 138 "CPar.fsy"
+# 139 "CPar.fsy"
                  : 'gentype_StmtM));
 # 714 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -717,10 +717,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 139 "CPar.fsy"
+# 140 "CPar.fsy"
                                                                Return(Some(_2))     
                    )
-# 139 "CPar.fsy"
+# 140 "CPar.fsy"
                  : 'gentype_StmtM));
 # 725 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -728,10 +728,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 140 "CPar.fsy"
+# 141 "CPar.fsy"
                                                                _1                   
                    )
-# 140 "CPar.fsy"
+# 141 "CPar.fsy"
                  : 'gentype_StmtM));
 # 736 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -741,10 +741,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 141 "CPar.fsy"
+# 142 "CPar.fsy"
                                                                If(_3, _5, _7)       
                    )
-# 141 "CPar.fsy"
+# 142 "CPar.fsy"
                  : 'gentype_StmtM));
 # 749 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -753,10 +753,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 142 "CPar.fsy"
+# 143 "CPar.fsy"
                                                                While(_3, _5)        
                    )
-# 142 "CPar.fsy"
+# 143 "CPar.fsy"
                  : 'gentype_StmtM));
 # 761 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -766,10 +766,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 146 "CPar.fsy"
+# 147 "CPar.fsy"
                                                                If(_3, _5, _7)       
                    )
-# 146 "CPar.fsy"
+# 147 "CPar.fsy"
                  : 'gentype_StmtU));
 # 774 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -778,10 +778,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 147 "CPar.fsy"
+# 148 "CPar.fsy"
                                                                If(_3, _5, Block []) 
                    )
-# 147 "CPar.fsy"
+# 148 "CPar.fsy"
                  : 'gentype_StmtU));
 # 786 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -790,10 +790,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 148 "CPar.fsy"
+# 149 "CPar.fsy"
                                                                While(_3, _5)        
                    )
-# 148 "CPar.fsy"
+# 149 "CPar.fsy"
                  : 'gentype_StmtU));
 # 798 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -801,10 +801,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 152 "CPar.fsy"
+# 153 "CPar.fsy"
                                                                Access _1           
                    )
-# 152 "CPar.fsy"
+# 153 "CPar.fsy"
                  : 'gentype_Expr));
 # 809 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -812,10 +812,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 153 "CPar.fsy"
+# 154 "CPar.fsy"
                                                                _1                  
                    )
-# 153 "CPar.fsy"
+# 154 "CPar.fsy"
                  : 'gentype_Expr));
 # 820 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -823,10 +823,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 157 "CPar.fsy"
+# 158 "CPar.fsy"
                                                                _1                  
                    )
-# 157 "CPar.fsy"
+# 158 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 831 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -835,10 +835,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 158 "CPar.fsy"
+# 159 "CPar.fsy"
                                                                Assign(_1, _3)      
                    )
-# 158 "CPar.fsy"
+# 159 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 843 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -847,10 +847,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 159 "CPar.fsy"
+# 160 "CPar.fsy"
                                                                Call(_1, _3)        
                    )
-# 159 "CPar.fsy"
+# 160 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 855 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -858,10 +858,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 160 "CPar.fsy"
+# 161 "CPar.fsy"
                                                                Prim1("!", _2)      
                    )
-# 160 "CPar.fsy"
+# 161 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 866 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -869,20 +869,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 161 "CPar.fsy"
+# 162 "CPar.fsy"
                                                                Prim1("printi", _2) 
                    )
-# 161 "CPar.fsy"
+# 162 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 877 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 162 "CPar.fsy"
+# 163 "CPar.fsy"
                                                                Prim1("printc", nl) 
                    )
-# 162 "CPar.fsy"
+# 163 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 887 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -891,10 +891,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 163 "CPar.fsy"
+# 164 "CPar.fsy"
                                                                Prim2("+",  _1, _3) 
                    )
-# 163 "CPar.fsy"
+# 164 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 899 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -903,10 +903,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 164 "CPar.fsy"
+# 165 "CPar.fsy"
                                                                Prim2("-",  _1, _3) 
                    )
-# 164 "CPar.fsy"
+# 165 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 911 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -915,10 +915,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 165 "CPar.fsy"
+# 166 "CPar.fsy"
                                                                Prim2("*",  _1, _3) 
                    )
-# 165 "CPar.fsy"
+# 166 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 923 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -927,10 +927,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 166 "CPar.fsy"
+# 167 "CPar.fsy"
                                                                Prim2("/",  _1, _3) 
                    )
-# 166 "CPar.fsy"
+# 167 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 935 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -939,10 +939,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 167 "CPar.fsy"
+# 168 "CPar.fsy"
                                                                Prim2("%",  _1, _3) 
                    )
-# 167 "CPar.fsy"
+# 168 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 947 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -951,10 +951,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 168 "CPar.fsy"
+# 169 "CPar.fsy"
                                                                Prim2("==", _1, _3) 
                    )
-# 168 "CPar.fsy"
+# 169 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 959 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -963,10 +963,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 169 "CPar.fsy"
+# 170 "CPar.fsy"
                                                                Prim2("!=", _1, _3) 
                    )
-# 169 "CPar.fsy"
+# 170 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 971 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -975,10 +975,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 170 "CPar.fsy"
+# 171 "CPar.fsy"
                                                                Prim2(">",  _1, _3) 
                    )
-# 170 "CPar.fsy"
+# 171 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 983 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -987,10 +987,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 171 "CPar.fsy"
+# 172 "CPar.fsy"
                                                                Prim2("<",  _1, _3) 
                    )
-# 171 "CPar.fsy"
+# 172 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 995 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -999,10 +999,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 172 "CPar.fsy"
+# 173 "CPar.fsy"
                                                                Prim2(">=", _1, _3) 
                    )
-# 172 "CPar.fsy"
+# 173 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 1007 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1011,10 +1011,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 173 "CPar.fsy"
+# 174 "CPar.fsy"
                                                                Prim2("<=", _1, _3) 
                    )
-# 173 "CPar.fsy"
+# 174 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 1019 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1023,10 +1023,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 174 "CPar.fsy"
+# 175 "CPar.fsy"
                                                                Andalso(_1, _3)     
                    )
-# 174 "CPar.fsy"
+# 175 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 1031 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1035,10 +1035,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 175 "CPar.fsy"
+# 176 "CPar.fsy"
                                                                Orelse(_1, _3)      
                    )
-# 175 "CPar.fsy"
+# 176 "CPar.fsy"
                  : 'gentype_ExprNotAccess));
 # 1043 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1046,10 +1046,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 183 "CPar.fsy"
+# 184 "CPar.fsy"
                                                                CstI _1             
                    )
-# 183 "CPar.fsy"
+# 184 "CPar.fsy"
                  : 'gentype_AtExprNotAccess));
 # 1054 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1057,10 +1057,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 184 "CPar.fsy"
+# 185 "CPar.fsy"
                                                                _2                  
                    )
-# 184 "CPar.fsy"
+# 185 "CPar.fsy"
                  : 'gentype_AtExprNotAccess));
 # 1065 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1068,10 +1068,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 185 "CPar.fsy"
+# 186 "CPar.fsy"
                                                                Addr _2             
                    )
-# 185 "CPar.fsy"
+# 186 "CPar.fsy"
                  : 'gentype_AtExprNotAccess));
 # 1076 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1079,10 +1079,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 186 "CPar.fsy"
+# 187 "CPar.fsy"
                                                                ConstBool(_1)       
                    )
-# 186 "CPar.fsy"
+# 187 "CPar.fsy"
                  : 'gentype_AtExprNotAccess));
 # 1087 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1090,10 +1090,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 187 "CPar.fsy"
+# 188 "CPar.fsy"
                                                                ConstFloat(_1)      
                    )
-# 187 "CPar.fsy"
+# 188 "CPar.fsy"
                  : 'gentype_AtExprNotAccess));
 # 1098 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1101,10 +1101,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 191 "CPar.fsy"
+# 192 "CPar.fsy"
                                                                AccVar _1           
                    )
-# 191 "CPar.fsy"
+# 192 "CPar.fsy"
                  : 'gentype_Access));
 # 1109 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1112,10 +1112,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 192 "CPar.fsy"
+# 193 "CPar.fsy"
                                                                _2                  
                    )
-# 192 "CPar.fsy"
+# 193 "CPar.fsy"
                  : 'gentype_Access));
 # 1120 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1123,10 +1123,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 193 "CPar.fsy"
+# 194 "CPar.fsy"
                                                                AccDeref (Access _2)
                    )
-# 193 "CPar.fsy"
+# 194 "CPar.fsy"
                  : 'gentype_Access));
 # 1131 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1134,10 +1134,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 194 "CPar.fsy"
+# 195 "CPar.fsy"
                                                                AccDeref _2         
                    )
-# 194 "CPar.fsy"
+# 195 "CPar.fsy"
                  : 'gentype_Access));
 # 1142 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1146,20 +1146,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 195 "CPar.fsy"
+# 196 "CPar.fsy"
                                                                AccIndex(_1, _3)    
                    )
-# 195 "CPar.fsy"
+# 196 "CPar.fsy"
                  : 'gentype_Access));
 # 1154 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 199 "CPar.fsy"
+# 200 "CPar.fsy"
                                                                []       
                    )
-# 199 "CPar.fsy"
+# 200 "CPar.fsy"
                  : 'gentype_Exprs));
 # 1164 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1167,10 +1167,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 200 "CPar.fsy"
+# 201 "CPar.fsy"
                                                                _1       
                    )
-# 200 "CPar.fsy"
+# 201 "CPar.fsy"
                  : 'gentype_Exprs));
 # 1175 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1178,10 +1178,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 204 "CPar.fsy"
+# 205 "CPar.fsy"
                                                                [_1]     
                    )
-# 204 "CPar.fsy"
+# 205 "CPar.fsy"
                  : 'gentype_Exprs1));
 # 1186 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1190,10 +1190,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 205 "CPar.fsy"
+# 206 "CPar.fsy"
                                                                _1 :: _3 
                    )
-# 205 "CPar.fsy"
+# 206 "CPar.fsy"
                  : 'gentype_Exprs1));
 # 1198 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1201,10 +1201,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 209 "CPar.fsy"
+# 210 "CPar.fsy"
                                                                _1       
                    )
-# 209 "CPar.fsy"
+# 210 "CPar.fsy"
                  : 'gentype_Const));
 # 1209 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1212,20 +1212,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 210 "CPar.fsy"
+# 211 "CPar.fsy"
                                                                - _2     
                    )
-# 210 "CPar.fsy"
+# 211 "CPar.fsy"
                  : 'gentype_Const));
 # 1220 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 211 "CPar.fsy"
+# 212 "CPar.fsy"
                                                                -1       
                    )
-# 211 "CPar.fsy"
+# 212 "CPar.fsy"
                  : 'gentype_Const));
 # 1230 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1233,10 +1233,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 215 "CPar.fsy"
+# 216 "CPar.fsy"
                                                                _1       
                    )
-# 215 "CPar.fsy"
+# 216 "CPar.fsy"
                  : 'gentype_ConstBool));
 # 1241 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1244,10 +1244,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 218 "CPar.fsy"
+# 219 "CPar.fsy"
                                                                _1       
                    )
-# 218 "CPar.fsy"
+# 219 "CPar.fsy"
                  : 'gentype_ConstFloat));
 # 1252 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -1255,50 +1255,50 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 219 "CPar.fsy"
+# 220 "CPar.fsy"
                                                                - _2     
                    )
-# 219 "CPar.fsy"
+# 220 "CPar.fsy"
                  : 'gentype_ConstFloat));
 # 1263 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 222 "CPar.fsy"
+# 223 "CPar.fsy"
                                                                TypI     
                    )
-# 222 "CPar.fsy"
+# 223 "CPar.fsy"
                  : 'gentype_Type));
 # 1273 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 223 "CPar.fsy"
+# 224 "CPar.fsy"
                                                                TypC     
                    )
-# 223 "CPar.fsy"
+# 224 "CPar.fsy"
                  : 'gentype_Type));
 # 1283 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 224 "CPar.fsy"
+# 225 "CPar.fsy"
                                                                TypB     
                    )
-# 224 "CPar.fsy"
+# 225 "CPar.fsy"
                  : 'gentype_Type));
 # 1293 "CPar.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 225 "CPar.fsy"
+# 226 "CPar.fsy"
                                                                TypF     
                    )
-# 225 "CPar.fsy"
+# 226 "CPar.fsy"
                  : 'gentype_Type));
 |]
 # 1304 "CPar.fs"
