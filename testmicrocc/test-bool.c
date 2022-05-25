@@ -1,4 +1,4 @@
 void main(int n) {
-  bool b = true; 
+ int b=1; 
   print("%d",b);
 }

@@ -195,7 +195,7 @@ class Machine {
     tstream.parseNumbers();
     tstream.nextToken();
     while (tstream.ttype == StreamTokenizer.TT_NUMBER) {
-      rawprogram.add(new Integer((int)tstream.nval));
+      rawprogram.add( Integer.valueOf((int)tstream.nval));
       tstream.nextToken();
     }
     inp.close();
