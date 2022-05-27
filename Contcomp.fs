@@ -34,21 +34,25 @@ type bstmtordec =
 (* ------------------------------------------------------------------- *)
 
 (* Code-generating functions that perform local optimizations *)
-
+//执行局部优化的代码生成函数
+//INCSP m 的意思是increase stack top by m
+//RET m 的意思是pop m and return to s[sp]
+//Label lab 是符号标签；伪指令。
+//大致的功能就是实现栈的空间操作
 let rec addINCSP m1 C : instr list =
     match C with
     | INCSP m2            :: C1 -> addINCSP (m1+m2) C1
     | RET m2              :: C1 -> RET (m2-m1) :: C1
     | Label lab :: RET m2 :: _  -> RET (m2-m1) :: C
     | _                         -> if m1=0 then C else INCSP m1 :: C
-
+//条件跳转C
 let addLabel C : label * instr list =          (* Conditional jump to C *)
     match C with
     | Label lab :: _ -> (lab, C)
     | GOTO lab :: _  -> (lab, C)
     | _              -> let lab = newLabel() 
                         (lab, Label lab :: C)
-
+//无条件跳转C
 let makeJump C : instr * instr list =          (* Unconditional jump to C *)
     match C with
     | RET m              :: _ -> (RET m, C)

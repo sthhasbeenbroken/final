@@ -308,6 +308,8 @@ and eval e locEnv gloEnv store : int * store =
         let (res, store2) = eval e locEnv gloEnv store1
         (res, setSto store2 loc res)
     | CstI i -> (i, store)
+    | ConstFloat i -> (System.BitConverter.ToInt32(System.BitConverter.GetBytes(i), 0), store)
+    | ConstChar i -> ((int32) (System.BitConverter.ToInt16(System.BitConverter.GetBytes(char (i)), 0)), store)
     | Addr acc -> access acc locEnv gloEnv store
     | Prim1 (ope, e1) ->
         let (i1, store1) = eval e1 locEnv gloEnv store
@@ -316,7 +318,7 @@ and eval e locEnv gloEnv store : int * store =
             match ope with
             | "!" -> if i1 = 0 then 1 else 0
             | "printi" ->
-                (printf "%d " i1
+                (printf "%d" i1
                  i1)
             | "printc" ->
                 (printf "%c" (char i1)
