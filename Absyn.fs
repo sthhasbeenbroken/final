@@ -30,7 +30,11 @@ and expr =                           // 表达式，右值
   | Andalso of expr * expr           (* Sequential and              *)
   | Orelse of expr * expr            (* Sequential or               *)
   | Call of string * expr list       (* Function call f(...)        *)
-                                                                   
+  | PreInc of access                 (* ++i *)
+  | PreDec of access                 (* --i *)                         
+  | PostInc of access                (* i++ *)
+  | PostDec of access                (* i-- *)
+  | Print of string * expr                                         
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 
   | AccDeref of expr                 (* Pointer dereferencing  *p   *)
@@ -42,6 +46,7 @@ and stmt =
   | Expr of expr                     (* Expression statement   e;   *)
   | Return of expr option            (* Return from method          *)
   | Block of stmtordec list          (* Block: grouping and scope   *)
+  | For of expr * expr * expr *stmt
   // 语句块内部，可以是变量声明 或语句的列表                                                              
 
 and stmtordec =                                                    

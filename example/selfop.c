@@ -1,5 +1,7 @@
 int main(){
-    bool b;
-    b=true;
+    int b;
+    b=0;
+    b++;
     print "%d" b;
+
 }

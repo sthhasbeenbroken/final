@@ -21,6 +21,9 @@ type token =
   | LT
   | GE
   | LE
+  | BOOL
+  | SELFINC
+  | SELFDEC
   | PLUS
   | MINUS
   | TIMES
@@ -37,12 +40,13 @@ type token =
   | RETURN
   | VOID
   | WHILE
+  | FOR
   | CSTCHAR of (char)
   | CSTFLOAT of (float32)
   | CSTSTRING of (string)
   | NAME of (string)
+  | CSTBOOL of (bool)
   | CSTINT of (int)
-  | CSTBOOL of (int)
 type tokenId = 
     | TOKEN_EOF
     | TOKEN_LPAR
@@ -64,6 +68,9 @@ type tokenId =
     | TOKEN_LT
     | TOKEN_GE
     | TOKEN_LE
+    | TOKEN_BOOL
+    | TOKEN_SELFINC
+    | TOKEN_SELFDEC
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_TIMES
@@ -80,12 +87,13 @@ type tokenId =
     | TOKEN_RETURN
     | TOKEN_VOID
     | TOKEN_WHILE
+    | TOKEN_FOR
     | TOKEN_CSTCHAR
     | TOKEN_CSTFLOAT
     | TOKEN_CSTSTRING
     | TOKEN_NAME
-    | TOKEN_CSTINT
     | TOKEN_CSTBOOL
+    | TOKEN_CSTINT
     | TOKEN_end_of_input
     | TOKEN_error
 type nonTerminalId = 
@@ -110,6 +118,7 @@ type nonTerminalId =
     | NONTERM_Exprs
     | NONTERM_Exprs1
     | NONTERM_Const
+    | NONTERM_ConstBool
     | NONTERM_ConstFloat
     | NONTERM_ConstChar
     | NONTERM_Type

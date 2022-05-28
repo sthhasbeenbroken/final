@@ -20,15 +20,17 @@ let keyword s =
     | "char"    -> CHAR    // 返回对应的Token ,Token 定义于 CPar.fsl 文件中
     | "float"   -> FLOAT
     | "else"    -> ELSE
-    | "false"   -> CSTBOOL 0
+    | "bool"    -> BOOL
+    | "false"   -> CSTBOOL false
     | "if"      -> IF
     | "int"     -> INT
     | "null"    -> NULL
     | "print"   -> PRINT
     | "println" -> PRINTLN
     | "return"  -> RETURN
-    | "true"    -> CSTBOOL 1
+    | "true"    -> CSTBOOL true
     | "void"    -> VOID 
+    | "for"     -> FOR
     | "while"   -> WHILE         
     | _         -> NAME s   // 缺省情况，是标识符的名字，如 函数名，变量名等
                             // 当所有的关键字没有匹配成功时，则当成标识符
@@ -59,9 +61,9 @@ rule Token = parse          // 每个 规则rule 会生成为一个函数，函�
                             //  System.Int32.Parse 将 字符串转换为 int 类型
                             // 在 CPar 中  词元CSTINT 的语义值的类型是int  %token <int> CSTINT
                             //  CSTINT 需要一个整数作为参数
+  | ("false"|"true") { CSTBOOL ( System.Boolean.Parse (lexemeAsString lexbuf )) }                          
   | ['0'-'9'] +'.'+['0'-'9']+ 
                     { CSTFLOAT (System.Single.Parse (lexemeAsString lexbuf)) }
-
   | ['a'-'z''A'-'Z']['a'-'z''A'-'Z''0'-'9']*
                     { keyword (lexemeAsString lexbuf) } //标识符处理
                                                        //先查是否是关键字，是则返回对应关键字的Token
@@ -97,8 +99,11 @@ rule Token = parse          // 每个 规则rule 会生成为一个函数，函�
   | "/*"            { Comment lexbuf; Token lexbuf }   // 多行注释，调用 Comment规则
   | '"'             { CSTSTRING (String [] lexbuf) }   // 调用字符串处理规则
   | eof             { EOF }
+  | ['\'']['a'-'z''A'-'Z''0'-'9']['\'']            
+                    { try let single = lexemeAsString lexbuf in CSTCHAR (System.Char.Parse(single.Substring(1, 1))) with ex -> failwith "char literal error." }
+  | "++"            { SELFINC }    //前置自增，后置自增
+  | "--"            { SELFDEC }    //前置自减，后置自减
   | _               { failwith "Lexer error: illegal symbol" }
-
 and Comment = parse
    | "/*"           { Comment lexbuf; Comment lexbuf }  // 注释的嵌套处理
    | "*/"           { () }                           // 注释处理结束

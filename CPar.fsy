@@ -17,27 +17,29 @@ let second (_, b, _) = b
 let third  (_, _, c) = c
 %}
 
-%token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
+%token <int> CSTINT // <int> 是词元的语义值类型
+%token <bool> CSTBOOL
 %token <string> CSTSTRING NAME
 %token <float32> CSTFLOAT
 %token <char> CSTCHAR
 
-%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE
+%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR
 %token PLUS MINUS TIMES DIV MOD
-%token EQ NE GT LT GE LE
+%token SELFINC SELFDEC
+%token EQ NE GT LT GE LE BOOL
 %token NOT SEQOR SEQAND
 %token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP
 %token EOF
 
 %right ASSIGN             /* lowest precedence */  // 最下面的优先级最高
-%nonassoc PRINT
+%nonassoc PRINT PRINTLN
 %left SEQOR
 %left SEQAND
 %left EQ NE 
 %nonassoc GT LT GE LE
 %left PLUS MINUS
 %left TIMES DIV MOD 
-%nonassoc NOT AMP 
+%nonassoc NOT AMP SELFINC SELFDEC
 %nonassoc LBRACK          /* highest precedence  */
 
 %start Main            // 语法开始符号
@@ -144,6 +146,7 @@ StmtM:  /* No unbalanced if-else */
   | Block                               { $1                   }
   | IF LPAR Expr RPAR StmtM ELSE StmtM  { If($3, $5, $7)       }
   | WHILE LPAR Expr RPAR StmtM          { While($3, $5)        }
+  | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
 ;
 
 StmtU:
@@ -162,8 +165,12 @@ ExprNotAccess:
   | Access ASSIGN Expr                  { Assign($1, $3)      } // $1为左值
   | NAME LPAR Exprs RPAR                { Call($1, $3)        }  
   | NOT Expr                            { Prim1("!", $2)      }
-  | PRINT Expr                          { Prim1("printi", $2) }
+  | PRINT CSTSTRING Expr                { Print($2, $3)       }
   | PRINTLN                             { Prim1("printc", nl) }
+  | SELFINC Access                      { PreInc $2       }  // 前置自增++a
+  | SELFDEC Access                      { PreDec $2       }  // 前置自减--a
+  | Access SELFINC                      { PostInc $1      }  // 后置自增a++
+  | Access SELFDEC                      { PostDec $1      }  // 后置自减a--
   | Expr PLUS  Expr                     { Prim2("+",  $1, $3) }
   | Expr MINUS Expr                     { Prim2("-",  $1, $3) }
   | Expr TIMES Expr                     { Prim2("*",  $1, $3) }
@@ -186,8 +193,9 @@ AtExprNotAccess:
     // (3)   
     Const                               { CstI $1             }
   | LPAR ExprNotAccess RPAR             { $2                  } 
-  | ConstFloat                          { ConstFloat($1)            }
-  | ConstChar                           { ConstChar($1)            }
+  | ConstBool                           { ConstBool($1)       }
+  | ConstFloat                          { ConstFloat($1)      }
+  | ConstChar                           { ConstChar($1)       }
   | AMP Access                          { Addr $2             } // 取地址
 ;
 
@@ -211,9 +219,11 @@ Exprs1:
 
 Const:
     CSTINT                              { $1       }
-  | CSTBOOL                             { $1       }
   | MINUS CSTINT                        { - $2     }
   | NULL                                { -1       }
+;
+ConstBool:
+  | CSTBOOL                             { $1       }
 ;
 ConstFloat:
     CSTFLOAT                            { $1       }
@@ -225,6 +235,7 @@ ConstChar:
 ;
 Type:
     INT                                 { TypI     }
+  | BOOL                                { TypB     }
   | CHAR                                { TypC     }
   | FLOAT                               { TypF     }
 ;

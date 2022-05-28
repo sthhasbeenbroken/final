@@ -270,6 +270,17 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                 store2 //退出循环返回 环境store2
 
         loop store
+    | For(e1,e2,e3,body) -> 
+          let (res ,store0) = eval e1 locEnv gloEnv store
+          let rec loop store1 =
+                //求值 循环条件,注意变更环境 store
+              let (v, store2) = eval e2 locEnv gloEnv  store1
+                // 继续循环
+              if v<>0 then  
+                            let (reend ,store3) = eval e3 locEnv gloEnv (exec body locEnv gloEnv store2)
+                            loop store3
+                          else store2  
+          loop store0
 
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
@@ -309,11 +320,39 @@ and eval e locEnv gloEnv store : int * store =
         (res, setSto store2 loc res)
     | CstI i -> (i, store)
     | ConstFloat i -> (System.BitConverter.ToInt32(System.BitConverter.GetBytes(i), 0), store)
-    | ConstChar i -> ((int32) (System.BitConverter.ToInt16(System.BitConverter.GetBytes(char (i)), 0)), store)
+    | ConstChar  i -> ((int32) (System.BitConverter.ToInt16(System.BitConverter.GetBytes(char (i)), 0)), store)
+    | ConstBool  i -> let res =
+                        match i with
+                        |true -> 1
+                        |false -> 0
+                      (res,store)
     | Addr acc -> access acc locEnv gloEnv store
+    | Print(op,e1)   -> let (i1, store1) = eval e1 locEnv gloEnv store
+                        let res = 
+                          match op with
+                          | "%c"   -> (printf "%c " (System.BitConverter.ToChar(System.BitConverter.GetBytes(i1),0)); i1)
+                          | "%d"   -> (printf "%d " i1 ; i1)  
+                          | "%f"   -> (printf "%f " (System.BitConverter.ToSingle(System.BitConverter.GetBytes(i1),0)) ;i1)
+                          | "%s"   -> (printf "%s " (string i1) ;i1 )
+                        (res, store1)  
+    | PreInc acc -> //前置自增
+        let (loc, store1) as res = access acc locEnv gloEnv store 
+        let res = getSto store1 loc 
+        (res + 1, setSto store1 loc (res + 1)) 
+    | PreDec acc -> //前置自减
+        let (loc, store1) as res = access acc locEnv gloEnv store 
+        let res = getSto store1 loc 
+        (res - 1, setSto store1 loc (res - 1)) 
+    | PostInc acc -> //后置自增
+        let (loc, store1) as res = access acc locEnv gloEnv store 
+        let res = getSto store1 loc 
+        (res , setSto store1 loc (res + 1)) 
+    | PostDec acc -> //后置自减
+        let (loc, store1) as res = access acc locEnv gloEnv store 
+        let res = getSto store1 loc 
+        (res, setSto store1 loc (res - 1)) 
     | Prim1 (ope, e1) ->
         let (i1, store1) = eval e1 locEnv gloEnv store
-
         let res =
             match ope with
             | "!" -> if i1 = 0 then 1 else 0
