@@ -289,11 +289,45 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
               if v<>0 then loop (exec body locEnv gloEnv store2)
                       else store2  //退出循环返回 环境store2
       loop (exec body locEnv gloEnv store)
+    | Switch(e,body) ->  //Switch
+              let (res, store1) = eval e locEnv gloEnv store
+              let rec choose list =
+                match list with
+                | Case(e1,body1) :: tail -> 
+                    let (res2, store2) = eval e1 locEnv gloEnv store1
+                    if res2=res then exec body1 locEnv gloEnv store2
+                                else choose tail
+                | [] -> store1
+                | Default( body1 ) :: tail -> 
+                    exec body1 locEnv gloEnv store1
+                    choose tail
+              (choose body)
+    | Case(e,body) -> exec body locEnv gloEnv store      
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store
         store1
-
+    | Forin(acc,e1,e2,body) -> 
+          let (loc, store1) = access acc locEnv gloEnv store
+          let (re, store2) = eval e1 locEnv gloEnv store1
+          let (re2,store3) = eval e2 locEnv gloEnv store2
+          match e1 with
+          | CstI i -> let rec loop i stores =
+                          if i<>(re2+1) then loop (i+1) (exec body locEnv gloEnv (setSto stores loc (int i)) )
+                                    else (stores)
+                      loop re store3 
+          | Access acc -> match acc with
+                          | AccIndex(ac, idx) ->
+                            let rec loop i stores =
+                              match i with 
+                              | Access acc2 -> match acc2 with
+                                              | AccIndex(ac2, idx2) ->
+                                                let ( index,stores2) = eval idx2 locEnv gloEnv stores ;
+                                                if i<>e2 then let (result,s) = eval i locEnv gloEnv stores2
+                                                              loop (Access (AccIndex (ac,CstI (index+1)) ) ) (exec body locEnv gloEnv (setSto s loc result) )
+                                                         else let (result,s) = eval i locEnv gloEnv stores2
+                                                              exec body locEnv gloEnv (setSto s loc result) 
+                            loop e1 store3 
     | Block stmts ->
 
         // 语句块 解释辅助函数 loop

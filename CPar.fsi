@@ -39,6 +39,7 @@ type token =
   | NULL
   | PRINT
   | PRINTLN
+  | IN
   | RETURN
   | VOID
   | WHILE
@@ -49,6 +50,9 @@ type token =
   | DOUNTIL
   | BREAK
   | CONTINUE
+  | SWITCH
+  | CASE
+  | DEFAULT
   | CSTCHAR of (char)
   | CSTFLOAT of (float32)
   | CSTSTRING of (string)
@@ -94,6 +98,7 @@ type tokenId =
     | TOKEN_NULL
     | TOKEN_PRINT
     | TOKEN_PRINTLN
+    | TOKEN_IN
     | TOKEN_RETURN
     | TOKEN_VOID
     | TOKEN_WHILE
@@ -104,6 +109,9 @@ type tokenId =
     | TOKEN_DOUNTIL
     | TOKEN_BREAK
     | TOKEN_CONTINUE
+    | TOKEN_SWITCH
+    | TOKEN_CASE
+    | TOKEN_DEFAULT
     | TOKEN_CSTCHAR
     | TOKEN_CSTFLOAT
     | TOKEN_CSTSTRING
@@ -127,6 +135,7 @@ type nonTerminalId =
     | NONTERM_Stmt
     | NONTERM_StmtM
     | NONTERM_StmtU
+    | NONTERM_StmtCase
     | NONTERM_Expr
     | NONTERM_ExprNotAccess
     | NONTERM_AtExprNotAccess

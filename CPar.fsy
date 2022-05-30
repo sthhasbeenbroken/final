@@ -23,7 +23,7 @@ let third  (_, _, c) = c
 %token <float32> CSTFLOAT
 %token <char> CSTCHAR
 
-%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR DOWHILE DO UNTIL DOUNTIL BREAK CONTINUE
+%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN IN RETURN VOID WHILE FOR DOWHILE DO UNTIL DOUNTIL BREAK CONTINUE SWITCH CASE DEFAULT
 %token PLUS MINUS TIMES DIV MOD
 %token SELFINC SELFDEC
 %token EQ NE GT LT GE LE BOOL
@@ -152,6 +152,8 @@ StmtM:  /* No unbalanced if-else */
   | DO StmtM UNTIL LPAR Expr RPAR SEMI  { DoUntil($2, $5)   }
   | BREAK SEMI                          { Break             }
   | CONTINUE SEMI                       { Continue          }
+  | FOR Access IN LPAR Expr COMMA Expr RPAR StmtM    { Forin($2,$5,$7,$9)   }
+  | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE        { Switch($3,$6)  }
 ;
 
 StmtU:
@@ -159,7 +161,11 @@ StmtU:
   | IF LPAR Expr RPAR Stmt              { If($3, $5, Block []) }
   | WHILE LPAR Expr RPAR StmtU          { While($3, $5)        }
 ;
-
+StmtCase:
+    CASE AtExprNotAccess COLON StmtM               { [Case($2,$4)]    }  
+  | DEFAULT COLON StmtM                            { [Default($3)]    }
+  | CASE AtExprNotAccess COLON StmtM StmtCase      { Case($2,$4) :: $5}
+;
 Expr: 
     Access                              { Access $1           } //取$1的右值
   | ExprNotAccess                       { $1                  } 
