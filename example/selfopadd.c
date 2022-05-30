@@ -1,6 +1,5 @@
 int main(){
-    int b;
-    int c;
+    int b; 
     b=0;
     print "%d" b++;
     print "%d" ++b;

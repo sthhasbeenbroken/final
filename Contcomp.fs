@@ -314,30 +314,33 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                             failwith("ERROR WORLD IN NUMBER")  
                     addCST res C                
     | Addr acc       -> cAccess acc varEnv funEnv C
-    | PostInc acc  ->
-                  let ass = Assign (acc,Prim2("+",Access acc, e))
-                  let C1 = cExpr ass varEnv funEnv C
-                  CSTI 1 :: ADD :: (addINCSP -1 C1)
+    | PostInc acc  ->           
+                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: ADD :: C)
+                (addINCSP 0 C1)
     | PostDec acc    -> 
-                    let ass = Assign (acc,Prim2("-",Access acc, e))
-                    let C1 =cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)
-                    (addINCSP -1 C1)
-    | PreInc acc ->
-                let ass = Assign (acc,Prim2("+",Access acc, e))
-                let C1 = cExpr ass varEnv funEnv C
-                CSTI 1 :: ADD :: (addINCSP -1 C1)
+                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)
+                (addINCSP 0 C1)
+    | PreInc acc ->              
+                let C1 = cAccess acc varEnv funEnv C
+                CSTI 1 :: ADD :: (addINCSP 0 C1)
     | PreDec acc ->
                 let ass = Assign (acc,Prim2("-",Access acc, e))
                 let C1 = cExpr ass varEnv funEnv C
-                CSTI 1 :: SUB :: (addINCSP -1 C1)
+                CSTI 1 :: SUB :: (addINCSP 0 C1)
     | Print(ope,e1)  ->
       cExpr e1 varEnv funEnv
         (match ope with
         | "%d"  -> PRINTI :: C
         | "%c"  -> PRINTC :: C
-        | "%f"  -> PRINTF :: C
+        | "%f"  -> PRINTI :: C
         )
-    | PrintHex(hex,e1)  -> failwith("Error")
+    | PrintHex(hex,e1) -> 
+     cExpr e1 varEnv funEnv
+        (match hex with
+          |16 ->PRINTI :: C)
+          
+                          
+      
     | Prim1(ope, e1) ->
       cExpr e1 varEnv funEnv
           (match ope with
