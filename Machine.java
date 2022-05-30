@@ -1,220 +1,485 @@
-/* File MicroC/Machine.java
-   A unified-stack abstract machine for imperative programs.
-   sestoft@itu.dk * 2001-03-21, 2009-09-24
-
-   To execute a program file using this abstract machine, do:
-
-      java Machine <programfile> <arg1> <arg2> ...
-
-   or, to get a trace of the program execution:
-
-      java Machinetrace <programfile> <arg1> <arg2> ...
-
-*/
+import cubyType.*;
+import exception.ImcompatibleTypeError;
+import exception.OperatorError;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
-class Machine {
-  public static void main(String[] args)        
-    throws FileNotFoundException, IOException {
-    if (args.length == 0) 
-      System.out.println("Usage: java Machine <programfile> <arg1> ...\n");
-    else
-      execute(args, false);
-  }
+public class Machine {
+    private final static int STACKSIZE = 1000;
 
-  // These numeric instruction codes must agree with Machine.fs:
+    public static void main(String[] args) throws FileNotFoundException, IOException, OperatorError, ImcompatibleTypeError {
+        if (args.length == 0)
+            System.out.println("Usage: java Machine <programfile> <arg1> ...\n");
+        else {
+            execute(args, false);
+        }
 
-  final static int 
-    CSTI = 0, ADD = 1, SUB = 2, MUL = 3, DIV = 4, MOD = 5, 
-    EQ = 6, LT = 7, NOT = 8, 
-    DUP = 9, SWAP = 10, 
-    LDI = 11, STI = 12, 
-    GETBP = 13, GETSP = 14, INCSP = 15, 
-    GOTO = 16, IFZERO = 17, IFNZRO = 18, CALL = 19, TCALL = 20, RET = 21, 
-    PRINTI = 22, PRINTC = 23, 
-    LDARGS = 24,
-    STOP = 25;
-
-  final static int STACKSIZE = 1000;
-  
-  // Read code from file and execute it
-
-  static void execute(String[] args, boolean trace) 
-    throws FileNotFoundException, IOException {
-    int[] p = readfile(args[0]);                // Read the program from file
-    int[] s = new int[STACKSIZE];               // The evaluation stack
-    int[] iargs = new int[args.length-1];
-    for (int i=1; i<args.length; i++)           // Push commandline arguments
-      iargs[i-1] = Integer.parseInt(args[i]);
-    long starttime = System.currentTimeMillis();
-    execcode(p, s, iargs, trace);            // Execute program proper
-    long runtime = System.currentTimeMillis() - starttime;
-    System.err.println("\nRan " + runtime/1000.0 + " seconds");
-  }
-
-  // The machine: execute the code starting at p[pc] 
-
-  static int execcode(int[] p, int[] s, int[] iargs, boolean trace) {
-    int bp = -999;	// Base pointer, for local variable access 
-    int sp = -1;	// Stack top pointer
-    int pc = 0;		// Program counter: next instruction
-    for (;;) {
-      if (trace) 
-        printsppc(s, bp, sp, p, pc);
-      switch (p[pc++]) {
-      case CSTI:
-        s[sp+1] = p[pc++]; sp++; break;
-      case ADD: 
-        s[sp-1] = s[sp-1] + s[sp]; sp--; break;
-      case SUB: 
-        s[sp-1] = s[sp-1] - s[sp]; sp--; break;
-      case MUL: 
-        s[sp-1] = s[sp-1] * s[sp]; sp--; break;
-      case DIV: 
-        s[sp-1] = s[sp-1] / s[sp]; sp--; break;
-      case MOD: 
-        s[sp-1] = s[sp-1] % s[sp]; sp--; break;
-      case EQ: 
-        s[sp-1] = (s[sp-1] == s[sp] ? 1 : 0); sp--; break;
-      case LT: 
-        s[sp-1] = (s[sp-1] < s[sp] ? 1 : 0); sp--; break;
-      case NOT: 
-        s[sp] = (s[sp] == 0 ? 1 : 0); break;
-      case DUP: 
-        s[sp+1] = s[sp]; sp++; break;
-      case SWAP: 
-        { int tmp = s[sp];  s[sp] = s[sp-1];  s[sp-1] = tmp; } break; 
-      case LDI:                 // load indirect
-        s[sp] = s[s[sp]]; break;
-      case STI:                 // store indirect, keep value on top
-        s[s[sp-1]] = s[sp]; s[sp-1] = s[sp]; sp--; break;
-      case GETBP:
-        s[sp+1] = bp; sp++; break;
-      case GETSP:
-        s[sp+1] = sp; sp++; break;
-      case INCSP:
-        sp = sp+p[pc++]; break;
-      case GOTO:
-        pc = p[pc]; break;
-      case IFZERO:
-        pc = (s[sp--] == 0 ? p[pc] : pc+1); break;
-      case IFNZRO:
-        pc = (s[sp--] != 0 ? p[pc] : pc+1); break;
-      case CALL: { 
-        int argc = p[pc++];
-        for (int i=0; i<argc; i++)	   // Make room for return address
-          s[sp-i+2] = s[sp-i];		   // and old base pointer
-        s[sp-argc+1] = pc+1; sp++; 
-        s[sp-argc+1] = bp;   sp++; 
-        bp = sp+1-argc;
-        pc = p[pc]; 
-      } break; 
-      case TCALL: { 
-        int argc = p[pc++];                // Number of new arguments
-        int pop  = p[pc++];		   // Number of variables to discard
-        for (int i=argc-1; i>=0; i--)	   // Discard variables
-          s[sp-i-pop] = s[sp-i];
-        sp = sp - pop; pc = p[pc]; 
-      } break; 
-      case RET: { 
-        int res = s[sp]; 
-        sp = sp-p[pc]; bp = s[--sp]; pc = s[--sp]; 
-        s[sp] = res; 
-      } break; 
-      case PRINTI:
-        System.out.print(s[sp] + " "); break; 
-      case PRINTC:
-        System.out.print((char)(s[sp])); break; 
-      case LDARGS:
-	for (int i=0; i<iargs.length; i++) // Push commandline arguments
-	  s[++sp] = iargs[i];
-	break;
-      case STOP:
-        return sp;
-      default:                  
-        throw new RuntimeException("Illegal instruction " + p[pc-1] 
-                                   + " at address " + (pc-1));
-      }
+//        args = new String[1];
+//        args[0] = "D:\\Yuby\\Cuby\\testing\\ex(float).out";
+////        args[1] = "Hello";
+////        args[2] = "1.2";
+////        args[3] = "100";
+////        args[4] = "123Hel";
+//        execute(args, false);
     }
-  }
 
-  // Print the stack machine instruction at p[pc]
 
-  static String insname(int[] p, int pc) {
-    switch (p[pc]) {
-    case CSTI:   return "CSTI " + p[pc+1]; 
-    case ADD:    return "ADD";
-    case SUB:    return "SUB";
-    case MUL:    return "MUL";
-    case DIV:    return "DIV";
-    case MOD:    return "MOD";
-    case EQ:     return "EQ";
-    case LT:     return "LT";
-    case NOT:    return "NOT";
-    case DUP:    return "DUP";
-    case SWAP:   return "SWAP";
-    case LDI:    return "LDI";
-    case STI:    return "STI";
-    case GETBP:  return "GETBP";
-    case GETSP:  return "GETSP";
-    case INCSP:  return "INCSP " + p[pc+1];
-    case GOTO:   return "GOTO " + p[pc+1];
-    case IFZERO: return "IFZERO " + p[pc+1];
-    case IFNZRO: return "IFNZRO " + p[pc+1];
-    case CALL:   return "CALL " + p[pc+1] + " " + p[pc+2];
-    case TCALL:  return "TCALL " + p[pc+1] + " " + p[pc+2] + " " + p[pc+3];
-    case RET:    return "RET " + p[pc+1];
-    case PRINTI: return "PRINTI";
-    case PRINTC: return "PRINTC";
-    case LDARGS: return "LDARGS";
-    case STOP:   return "STOP";
-    default:     return "<unknown>";
+    static void execute(String[] args, boolean trace) throws FileNotFoundException, IOException, OperatorError, ImcompatibleTypeError {
+        ArrayList<Integer> program = readfile(args[0]);
+
+        CubyBaseType[] stack = new CubyBaseType[STACKSIZE];
+
+        CubyBaseType[] inputArgs = new CubyBaseType[args.length - 1];
+
+        for (int i = 1; i < args.length; i++) {
+            if(Pattern.compile("(?i)[a-z]").matcher(args[i]).find()){
+                char[] input = args[i].toCharArray();
+                CubyCharType[] array = new CubyCharType[input.length];
+                for(int j = 0; j < input.length; ++j) {
+                    array[j] = new CubyCharType(input[j]);
+                }
+                inputArgs[i-1] = new CubyArrayType(array);
+            }
+            else if(args[i].contains(".")){
+                inputArgs[i-1] = new CubyFloatType(Float.valueOf(args[i]).floatValue());
+            }
+            else {
+                inputArgs[i-1] = new CubyIntType(Integer.valueOf(args[i]).intValue());
+            }
+        }
+
+
+//        for(int i = 0; i < inputArgs.length; ++i){
+//            if(inputArgs[i] instanceof CubyArrayType){
+//                CubyBaseType[] a = ((CubyArrayType)inputArgs[i]).getValue();
+//                for(int j = 0; j < a.length; ++j){
+//                    if(a[j] instanceof CubyCharType){
+//                        System.out.print(((CubyCharType)a[j]).getValue());
+//                    }
+//                    else if(a[j] instanceof CubyIntType){
+//                        System.out.print(((CubyIntType)a[j]).getValue());
+//                    }
+//                    else if(a[j] instanceof CubyFloatType){
+//                        System.out.print(((CubyFloatType)a[j]).getValue());
+//                    }
+//                }
+//                System.out.println();
+//            }
+//            else if(inputArgs[i] instanceof CubyCharType){
+//                System.out.println(((CubyCharType)inputArgs[i]).getValue());
+//            }
+//            else if(inputArgs[i] instanceof CubyIntType){
+//                System.out.println(((CubyIntType)inputArgs[i]).getValue());
+//            }
+//            else if(inputArgs[i] instanceof CubyFloatType){
+//                System.out.println(((CubyFloatType)inputArgs[i]).getValue());
+//            }
+//
+//        }
+
+        long startTime = System.currentTimeMillis();
+        execCode(program, stack, inputArgs, trace);
+        long runtime = System.currentTimeMillis() - startTime;
+        System.err.println("\nRan " + runtime/1000.0 + " seconds");
     }
-  }
 
-  // Print current stack and current instruction
 
-  static void printsppc(int[] s, int bp, int sp, int[] p, int pc) {
-    System.out.print("[ ");
-    for (int i=0; i<=sp; i++)
-      System.out.print(s[i] + " ");
-    System.out.print("]");
-    System.out.println("{" + pc + ": " + insname(p, pc) + "}"); 
-  }
+    private static int execCode(ArrayList<Integer> program, CubyBaseType[] stack, CubyBaseType[] inputArgs, boolean trace) throws ImcompatibleTypeError, OperatorError {
+        int bp = -999;
+        int sp = -1;
+        int pc = 0;
+        int hr = -1;
+        for (;;) {
+            if (trace)
+                printSpPc(stack, bp, sp, program, pc);
+            switch (program.get(pc++)) {
+                case Instruction.CSTI:
+                    stack[sp + 1] = new CubyIntType(program.get(pc++)); sp++; break;
+                case Instruction.CSTF:
+                    stack[sp + 1] = new CubyFloatType(Float.intBitsToFloat(program.get(pc++))); sp++; break;
+                case Instruction.CSTC:
+                    stack[sp + 1] = new CubyCharType((char)(program.get(pc++).intValue())); sp++; break;
+                case Instruction.ADD: {
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "+");
+                    sp--;
+                    break;
+                }
+                case Instruction.SUB:{
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "-");
+                    sp--;
+                    break;
+                }
 
-  // Read instructions from a file
+                case Instruction.MUL: {
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "*");
+                    sp--;
+                    break;
+                }
+                case Instruction.DIV:
+                    if(((CubyIntType)stack[sp]).getValue()==0)
+                    {
+                        System.out.println("hr:"+hr+" exception:"+1);
+                        while (hr != -1 && ((CubyIntType)stack[hr]).getValue() != 1 )
+                        {
+                            hr = ((CubyIntType)stack[hr+2]).getValue();
+                            System.out.println("hr:"+hr+" exception:"+new CubyIntType(program.get(pc)).getValue());
+                        }
+                            
+                        if (hr != -1) { 
+                            sp = hr-1;    
+                            pc = ((CubyIntType)stack[hr+1]).getValue();
+                            hr = ((CubyIntType)stack[hr+2]).getValue();    
+                        } else {
+                            System.out.print(hr+"not find exception");
+                            return sp;
+                        }
+                    }
+                    else{
+                        stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "/");
+                        sp--; 
+                    }
+                    
+                    break;
+                case Instruction.MOD:
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "%");
+                    sp--;
+                    break;
+                case Instruction.EQ:
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "==");
+                    sp--;
+                    break;
+                case Instruction.LT:
+                    stack[sp - 1] = binaryOperator(stack[sp-1], stack[sp], "<");
+                    sp--;
+                    break;
+                case Instruction.NOT: {
+                    Object result = null;
+                    if(stack[sp] instanceof CubyFloatType){
+                        result = ((CubyFloatType)stack[sp]).getValue();
+                    }else if (stack[sp] instanceof CubyIntType){
+                        result = ((CubyIntType)stack[sp]).getValue();
+                    }
+                    stack[sp] = (Float.compare(Float.valueOf(result.toString()), 0.0f) == 0 ? new CubyIntType(1) : new CubyIntType(0));
+                    break;
+                }
+                case Instruction.DUP:
+                    stack[sp+1] = stack[sp];
+                    sp++;
+                    break;
+                case Instruction.SWAP: {
+                    CubyBaseType tmp = stack[sp];  stack[sp] = stack[sp-1];  stack[sp-1] = tmp;
+                    break;
+                }
+                case Instruction.LDI:
+                    stack[sp] = stack[((CubyIntType)stack[sp]).getValue()]; break;
+                case Instruction.STI:
+                    stack[((CubyIntType)stack[sp-1]).getValue()] = stack[sp]; stack[sp-1] = stack[sp]; sp--; break;
+                case Instruction.GETBP:
+                    stack[sp+1] = new CubyIntType(bp); sp++; break;
+                case Instruction.GETSP:
+                    stack[sp+1] = new CubyIntType(sp); sp++; break;
+                case Instruction.INCSP:
+                    sp = sp + program.get(pc++); break;
+                case Instruction.GOTO:
+                    pc = program.get(pc); break;
+                case Instruction.IFZERO: {
+                    Object result = null;
+                    int index = sp--;
+                    if(stack[index] instanceof CubyIntType){
+                        result = ((CubyIntType)stack[index]).getValue();
+                    }else if(stack[index] instanceof CubyFloatType){
+                        result = ((CubyFloatType)stack[index]).getValue();
+                    }
+                    pc = (Float.compare(Float.valueOf(result.toString()), 0.0f) == 0 ? program.get(pc) : pc + 1);
+                    break;
+                }
+                case Instruction.IFNZRO: {
+                    Object result = null;
+                    int index = sp--;
+                    if (stack[index] instanceof CubyIntType) {
+                        result = ((CubyIntType) stack[index]).getValue();
+                    } else if (stack[index] instanceof CubyFloatType) {
+                        result = ((CubyFloatType) stack[index]).getValue();
+                    }
+                    pc = (Float.compare(Float.valueOf(result.toString()), 0.0f) != 0 ? program.get(pc) : pc + 1);
+                    break;
+                }
+                case Instruction.CALL: {
+                    int argc = program.get(pc++);
+                    for (int i=0; i<argc; i++)
+                    stack[sp-i+2] = stack[sp-i];
+                    stack[sp-argc+1] = new CubyIntType(pc+1); sp++;
+                    stack[sp-argc+1] = new CubyIntType(bp);   sp++;
+                    bp = sp+1-argc;
+                    pc = program.get(pc);
+                    break;
+                }
+                case Instruction.TCALL: {
+                    int argc = program.get(pc++);
+                    int pop  = program.get(pc++);
+                    for (int i=argc-1; i>=0; i--)
+                        stack[sp-i-pop] = stack[sp-i];
+                    sp = sp - pop; pc = program.get(pc);
+                } break;
+                case Instruction.RET: {
+                    CubyBaseType res = stack[sp];
+                    sp = sp - program.get(pc); bp = ((CubyIntType)stack[--sp]).getValue(); pc = ((CubyIntType)stack[--sp]).getValue();
+                    stack[sp] = res;
+                } break;
+                case Instruction.PRINTI: {
+                    Object result;
+                    if(stack[sp] instanceof CubyIntType){
+                        result = ((CubyIntType)stack[sp]).getValue();
+                    }else if(stack[sp] instanceof CubyFloatType){
+                        result = ((CubyFloatType)stack[sp]).getValue();
+                    }else {
+                        result = ((CubyCharType)stack[sp]).getValue();
+                    }
 
-  public static int[] readfile(String filename) 
-    throws FileNotFoundException, IOException
-  {
-    ArrayList<Integer> rawprogram = new ArrayList<Integer>();
-    Reader inp = new FileReader(filename);
-    StreamTokenizer tstream = new StreamTokenizer(inp);
-    tstream.parseNumbers();
-    tstream.nextToken();
-    while (tstream.ttype == StreamTokenizer.TT_NUMBER) {
-      rawprogram.add( Integer.valueOf((int)tstream.nval));
-      tstream.nextToken();
+                    System.out.print(String.valueOf(result) + " ");
+                    break;
+                }
+                case Instruction.PRINTC:
+                    System.out.print((((CubyCharType)stack[sp])).getValue()); break;
+                case Instruction.LDARGS:
+                    for (int i=0; i < inputArgs.length; i++) // Push commandline arguments
+                        stack[++sp] = inputArgs[i];
+                    break;
+                case Instruction.STOP:
+                    return sp;
+                case Instruction.PUSHHR:{
+                    stack[++sp] = new CubyIntType(program.get(pc++));    //exn
+                    int tmp = sp;       //exn address
+                    sp++;
+                    stack[sp++] = new CubyIntType(program.get(pc++));   //jump address
+                    stack[sp] = new CubyIntType(hr);
+                    hr = tmp;
+                    break;
+                }
+                case Instruction.POPHR:
+                    hr = ((CubyIntType)stack[sp--]).getValue();sp-=2;break;
+                case Instruction.THROW:
+                    System.out.println("hr:"+hr+" exception:"+new CubyIntType(program.get(pc)).getValue());
+
+                    while (hr != -1 && ((CubyIntType)stack[hr]).getValue() != program.get(pc) )
+                    {
+                        hr = ((CubyIntType)stack[hr+2]).getValue(); //find exn address
+                        System.out.println("hr:"+hr+" exception:"+new CubyIntType(program.get(pc)).getValue());
+                    }
+                        
+                    if (hr != -1) { // Found a handler for exn
+                        sp = hr-1;    // remove stack after hr
+                        pc = ((CubyIntType)stack[hr+1]).getValue();
+                        hr = ((CubyIntType)stack[hr+2]).getValue(); // with current handler being hr     
+                    } else {
+                        System.out.print(hr+"not find exception");
+                        return sp;
+                    }break;
+
+                default:
+                    throw new RuntimeException("Illegal instruction " + program.get(pc-1)
+                            + " at address " + (pc-1));
+
+            }
+
+
+        }
+
+
     }
-    inp.close();
-    final int programsize = rawprogram.size();
-    int[] program = new int[programsize];
-    for (int i=0; i<programsize; i++)
-      program[i] = ((Integer)(rawprogram.get(i))).intValue();
-    return program;
-  }
+
+    public static CubyBaseType binaryOperator(CubyBaseType lhs, CubyBaseType rhs, String operator) throws ImcompatibleTypeError, OperatorError {
+        Object left;
+        Object right;
+        int flag = 0;
+        if (lhs instanceof CubyFloatType) {
+            left = ((CubyFloatType) lhs).getValue();
+            flag = 1;
+        } else if (lhs instanceof CubyIntType) {
+            left = ((CubyIntType) lhs).getValue();
+        } else {
+            throw new ImcompatibleTypeError("ImcompatibleTypeError: Left type is not int or float");
+        }
+
+        if (rhs instanceof CubyFloatType) {
+            right = ((CubyFloatType) rhs).getValue();
+            flag = 1;
+        } else if (rhs instanceof CubyIntType) {
+            right = ((CubyIntType) rhs).getValue();
+        } else {
+            throw new ImcompatibleTypeError("ImcompatibleTypeError: Right type is not int or float");
+        }
+        CubyBaseType result = null;
+
+        switch(operator){
+            case "+":{
+                if (flag == 1) {
+                    result =  new CubyFloatType(Float.parseFloat(String.valueOf(left)) + Float.parseFloat(String.valueOf(right)));
+                } else {
+                    result = new CubyIntType(Integer.parseInt(String.valueOf(left)) + Integer.parseInt(String.valueOf(right)));
+                }
+                break;
+            }
+            case "-":{
+                if (flag == 1) {
+                    result = new CubyFloatType(Float.parseFloat(String.valueOf(left)) - Float.parseFloat(String.valueOf(right)));
+                } else {
+                    result = new CubyIntType(Integer.parseInt(String.valueOf(left)) - Integer.parseInt(String.valueOf(right)));
+                }
+                break;
+            }
+            case "*":{
+                if (flag == 1) {
+                    result = new CubyFloatType(Float.parseFloat(String.valueOf(left)) * Float.parseFloat(String.valueOf(right)));
+                } else {
+                    result = new CubyIntType(Integer.parseInt(String.valueOf(left)) * Integer.parseInt(String.valueOf(right)));
+                }
+                break;
+            }
+            case "/":{
+                if(Float.compare(Float.parseFloat(String.valueOf(right)), 0.0f) == 0){
+                    throw new OperatorError("OpeatorError: Divisor can't not be zero");
+                }
+                if (flag == 1) {
+                    result = new CubyFloatType(Float.parseFloat(String.valueOf(left)) / Float.parseFloat(String.valueOf(right)));
+                } else {
+                    result = new CubyIntType(Integer.parseInt(String.valueOf(left)) / Integer.parseInt(String.valueOf(right)));
+                }
+                break;
+            }
+            case "%":{
+                if (flag == 1) {
+                    throw new OperatorError("OpeatorError: Float can't mod");
+                } else {
+                    result = new CubyIntType(Integer.parseInt(String.valueOf(left)) % Integer.parseInt(String.valueOf(right)));
+                }
+                break;
+            }
+            case "==":{
+                if (flag == 1) {
+                    if((float) left == (float) right){
+                        result = new CubyIntType(1);
+                    }
+                    else{
+                        result = new CubyIntType(0);
+                    }
+                } else {
+                    if((int) left == (int) right){
+                        result = new CubyIntType(1);
+                    }
+                    else{
+                        result = new CubyIntType(0);
+                    }
+                }
+                break;
+            }
+            case "<":{
+                if (flag == 1) {
+                    if((float) left < (float) right){
+                        result = new CubyIntType(1);
+                    }
+                    else{
+                        result = new CubyIntType(0);
+                    }
+                } else {
+                    if((int) left < (int) right){
+                        result = new CubyIntType(1);
+                    }
+                    else{
+                        result = new CubyIntType(0);
+                    }
+                }
+                break;
+            }
+        }
+        return result;
+    }
+
+
+    private static String insName(ArrayList<Integer> program, int pc) {
+        switch (program.get(pc)) {
+            case Instruction.CSTI:   return "CSTI " + program.get(pc+1);
+            case Instruction.CSTF:   return "CSTF " + program.get(pc+1);
+            case Instruction.CSTC:   return "CSTC " + (char)(program.get(pc+1).intValue());
+            case Instruction.ADD:    return "ADD";
+            case Instruction.SUB:    return "SUB";
+            case Instruction.MUL:    return "MUL";
+            case Instruction.DIV:    return "DIV";
+            case Instruction.MOD:    return "MOD";
+            case Instruction.EQ:     return "EQ";
+            case Instruction.LT:     return "LT";
+            case Instruction.NOT:    return "NOT";
+            case Instruction.DUP:    return "DUP";
+            case Instruction.SWAP:   return "SWAP";
+            case Instruction.LDI:    return "LDI";
+            case Instruction.STI:    return "STI";
+            case Instruction.GETBP:  return "GETBP";
+            case Instruction.GETSP:  return "GETSP";
+            case Instruction.INCSP:  return "INCSP " + program.get(pc+1);
+            case Instruction.GOTO:   return "GOTO " + program.get(pc+1);
+            case Instruction.IFZERO: return "IFZERO " + program.get(pc+1);
+            case Instruction.IFNZRO: return "IFNZRO " + program.get(pc+1);
+            case Instruction.CALL:   return "CALL " + program.get(pc+1) + " " + program.get(pc+2);
+            case Instruction.TCALL:  return "TCALL " + program.get(pc+1) + " " + program.get(pc+2) + " " +program.get(pc+3);
+            case Instruction.RET:    return "RET " + program.get(pc+1);
+            case Instruction.PRINTI: return "PRINTI";
+            case Instruction.PRINTC: return "PRINTC";
+            case Instruction.LDARGS: return "LDARGS";
+            case Instruction.STOP:   return "STOP";
+            case Instruction.THROW:  return "THROW" + program.get(pc+1);
+            case Instruction.PUSHHR: return "PUSHHR" + " " + program.get(pc+ 1) + " " + program.get(pc+2) ;
+            case Instruction.POPHR: return "POPHR";
+            case Instruction.PRINTF: return "PRINTF";
+            default:     return "<unknown>";
+        }
+    }
+
+
+    private static void printSpPc(CubyBaseType[] stack, int bp, int sp, ArrayList<Integer> program, int pc) {
+        System.out.print("[ ");
+        for (int i = 0; i <= sp; i++) {
+            Object result = null;
+            if(stack[i] instanceof CubyIntType){
+                result = ((CubyIntType)stack[i]).getValue();
+            }else if(stack[i] instanceof CubyFloatType){
+                result = ((CubyFloatType)stack[i]).getValue();
+            }else if(stack[i] instanceof CubyCharType){
+                result = ((CubyCharType)stack[i]).getValue();
+            }
+            System.out.print(String.valueOf(result) + " ");
+        }
+        System.out.print("]");
+        System.out.println("{" + pc + ": " + insName(program, pc) + "}");
+    }
+
+
+    private static ArrayList<Integer> readfile(String filename) throws FileNotFoundException, IOException {
+        ArrayList<Integer> program = new ArrayList<Integer>();
+        Reader inp = new FileReader(filename);
+
+        StreamTokenizer tStream = new StreamTokenizer(inp);
+        tStream.parseNumbers();
+        tStream.nextToken();
+        while (tStream.ttype == StreamTokenizer.TT_NUMBER) {
+            program.add(Integer.valueOf((int)tStream.nval));
+            tStream.nextToken();
+        }
+
+        inp.close();
+
+        return program;
+    }
 }
 
-// Run the machine with tracing: print each instruction as it is executed
 
 class Machinetrace {
-  public static void main(String[] args)        
-    throws FileNotFoundException, IOException {
-    if (args.length == 0) 
-      System.out.println("Usage: java Machinetrace <programfile> <arg1> ...\n");
-    else
-      Machine.execute(args, true);
-  }
+    public static void main(String[] args)
+            throws FileNotFoundException, IOException, OperatorError, ImcompatibleTypeError {
+        if (args.length == 0)
+            System.out.println("Usage: java Machinetrace <programfile> <arg1> ...\n");
+        else
+            Machine.execute(args, true);
+    }
 }

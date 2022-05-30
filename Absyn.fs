@@ -27,6 +27,7 @@ and expr =                           // 表达式，右值
   | ConstFloat of float32
   | Prim1 of string * expr           (* Unary primitive operator    *)
   | Prim2 of string * expr * expr    (* Binary primitive operator   *)
+  | Prim3 of expr * expr * expr
   | Andalso of expr * expr           (* Sequential and              *)
   | Orelse of expr * expr            (* Sequential or               *)
   | Call of string * expr list       (* Function call f(...)        *)
@@ -34,7 +35,8 @@ and expr =                           // 表达式，右值
   | PreDec of access                 (* --i *)                         
   | PostInc of access                (* i++ *)
   | PostDec of access                (* i-- *)
-  | Print of string * expr                                         
+  | Print of string * expr                        
+                   
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 
   | AccDeref of expr                 (* Pointer dereferencing  *p   *)

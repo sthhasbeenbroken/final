@@ -67,30 +67,30 @@ let makeCall m lab C : instr list =
     | RET n            :: C1 -> TCALL(m, n, lab) :: C1
     | Label _ :: RET n :: _  -> TCALL(m, n, lab) :: C
     | _                      -> CALL(m, lab) :: C
-
+//去除C中的第一个Label及之前的所有的代码
 let rec deadcode C =
     match C with
     | []              -> []
     | Label lab :: _  -> C
     | _         :: C1 -> deadcode C1
-
+//添加NOT（s[sp] != 0 ）
 let addNOT C =
     match C with
     | NOT        :: C1 -> C1
     | IFZERO lab :: C1 -> IFNZRO lab :: C1 
     | IFNZRO lab :: C1 -> IFZERO lab :: C1 
     | _                -> NOT :: C
-
+//jump is GOTO or RET 把jump通过判断添加进去
 let addJump jump C =                    (* jump is GOTO or RET *)
     let C1 = deadcode C
     match (jump, C1) with
     | (GOTO lab1, Label lab2 :: _) -> if lab1=lab2 then C1 
                                       else GOTO lab1 :: C1
     | _                            -> jump :: C1
-    
+//调用addjump函数，把goto加入进去
 let addGOTO lab C =
     addJump (GOTO lab) C
-
+//添加操作符
 let rec addCST i C =
     match (i, C) with
     | (0, ADD        :: C1) -> C1
@@ -107,6 +107,15 @@ let rec addCST i C =
     | (0, IFNZRO lab :: C1) -> C1
     | (_, IFNZRO lab :: C1) -> addGOTO lab C1
     | _                     -> CSTI i :: C
+
+//添加float
+let rec addCSTF i C =
+    match (i, C) with
+    | _                     -> (CSTF (System.BitConverter.ToInt32(System.BitConverter.GetBytes(float32(i)), 0))) :: C
+//添加char
+let rec addCSTC i C =
+    match (i, C) with
+    | _                     -> (CSTC ((int32)(System.BitConverter.ToInt16(System.BitConverter.GetBytes(char(i)), 0)))) :: C
             
 (* ------------------------------------------------------------------- *)
 
@@ -199,6 +208,16 @@ let rec cStmt stmt (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : instr 
       let (jumptest, C1) = 
            makeJump (cExpr e varEnv funEnv (IFNZRO labbegin :: C))
       addJump jumptest (Label labbegin :: cStmt body varEnv funEnv C1)
+    | For(dec, e, opera,body) ->
+        let labend   = newLabel()                       //结束label
+        let labbegin = newLabel()                       //设置label 
+        let labope   = newLabel()                       //设置 for(,,opera) 的label
+        let Cend = Label labend :: C
+        let (jumptest, C2) =                                                
+            makeJump (cExpr e varEnv funEnv (IFNZRO labbegin :: Cend)) 
+        let C3 = Label labope :: cExpr opera varEnv funEnv (addINCSP -1 C2)
+        let C4 = cStmt body varEnv funEnv C3    
+        cExpr dec varEnv funEnv (addINCSP -1 (addJump jumptest  (Label labbegin :: C4) ) )
     | Expr e -> 
       cExpr e varEnv funEnv (addINCSP -1 C) 
     | Block stmts -> 
@@ -249,7 +268,22 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
     | Access acc     -> cAccess acc varEnv funEnv (LDI :: C)
     | Assign(acc, e) -> cAccess acc varEnv funEnv (cExpr e varEnv funEnv (STI :: C))
     | CstI i         -> addCST i C
+    | ConstFloat i      -> addCSTF i C     //浮点数
+    | ConstBool b       -> let res = 
+                            if b = false then 0
+                                        else 1
+                           addCST res C   //整数
+    | ConstChar i       -> addCSTC (int i) C   //字符                       
     | Addr acc       -> cAccess acc varEnv funEnv C
+    | PostInc acc    -> let C1 =cAccess acc varEnv funEnv (CSTI 1 :: ADD :: C)
+                        (addINCSP -1 C1)
+    | Print(ope,e1)  ->
+      cExpr e1 varEnv funEnv
+        (match ope with
+        | "%d"  -> PRINTI :: C
+        | "%c"  -> PRINTF :: C
+        | "%f"  -> PRINTF :: C
+        )
     | Prim1(ope, e1) ->
       cExpr e1 varEnv funEnv
           (match ope with
@@ -273,6 +307,11 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
             | ">"   -> SWAP :: LT :: C
             | "<="  -> SWAP :: LT :: addNOT C
             | _     -> failwith "unknown primitive 2"))
+    //三目运算
+    | Prim3(cond, e1, e2)    ->
+        let (jumpend, C1) = makeJump C
+        let (labelse, C2) = addLabel (cExpr e2 varEnv funEnv C1)
+        cExpr cond varEnv funEnv (IFZERO labelse :: cExpr e1 varEnv funEnv (addJump jumpend C2))
     | Andalso(e1, e2) ->
       match C with
       | IFZERO lab :: _ ->

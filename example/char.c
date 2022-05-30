@@ -1,5 +1,5 @@
 int main(){
     char a;
-    a= 97;
+    a= 'a';
     print "%c" a;
 }
