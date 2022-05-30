@@ -33,6 +33,8 @@ type token =
   | MOD
   | CHAR
   | FLOAT
+  | STRING
+  | HEX
   | ELSE
   | IF
   | INT
@@ -92,6 +94,8 @@ type tokenId =
     | TOKEN_MOD
     | TOKEN_CHAR
     | TOKEN_FLOAT
+    | TOKEN_STRING
+    | TOKEN_HEX
     | TOKEN_ELSE
     | TOKEN_IF
     | TOKEN_INT
@@ -145,6 +149,7 @@ type nonTerminalId =
     | NONTERM_Const
     | NONTERM_ConstBool
     | NONTERM_ConstFloat
+    | NONTERM_ConstString
     | NONTERM_ConstChar
     | NONTERM_Type
 /// This function maps tokens to integer indexes

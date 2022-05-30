@@ -16,8 +16,10 @@ type typ =
   | TypP of typ                      (* Pointer type                *)
   | TypB                             (* Type boolean                *)
   | TypF                             (* Type float                  *)
+  | TypS                             (* Type string                *)
                                                                    
-and expr =                           // 表达式，右值                                                
+and expr =                           // 表达式，右值    
+  | Hex of string * int                                            
   | Access of access                 (* x    or  *p    or  a[e]     *) //访问左值（右值）
   | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
   | Addr of access                   (* &x   or  &*p   or  &a[e]    *)
@@ -25,6 +27,7 @@ and expr =                           // 表达式，右值
   | ConstChar of char (*constant char*)                 
   | ConstBool of bool
   | ConstFloat of float32
+  | ConstString of string (*constant string*)
   | Prim1 of string * expr           (* Unary primitive operator    *)
   | Prim2 of string * expr * expr    (* Binary primitive operator   *)
   | Prim3 of expr * expr * expr
@@ -36,7 +39,7 @@ and expr =                           // 表达式，右值
   | PostInc of access                (* i++ *)
   | PostDec of access                (* i-- *)
   | Print of string * expr                        
-                   
+  | PrintHex of int * expr           (*HEXPRINT*)                 
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 
   | AccDeref of expr                 (* Pointer dereferencing  *p   *)

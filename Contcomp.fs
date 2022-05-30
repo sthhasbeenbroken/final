@@ -116,7 +116,7 @@ let rec addCSTF i C =
 let rec addCSTC i C =
     match (i, C) with
     | _                     -> (CSTC ((int32)(System.BitConverter.ToInt16(System.BitConverter.GetBytes(char(i)), 0)))) :: C
-            
+           
 (* ------------------------------------------------------------------- *)
 
 (* Simple environment operations *)
@@ -208,6 +208,16 @@ let rec cStmt stmt (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : instr 
       let (jumptest, C1) = 
            makeJump (cExpr e varEnv funEnv (IFNZRO labbegin :: C))
       addJump jumptest (Label labbegin :: cStmt body varEnv funEnv C1)
+    | DoUntil(body,e) ->
+        let labbegin = newLabel()
+        let C1 = 
+            cExpr e varEnv funEnv (IFZERO labbegin :: C)
+        Label labbegin :: cStmt body varEnv funEnv C1
+    | DoWhile(body, e) ->
+        let labbegin = newLabel()
+        let C1 = 
+            cExpr e varEnv funEnv (IFNZRO labbegin :: C)
+        Label labbegin :: cStmt body varEnv funEnv C1 //先执行body
     | For(dec, e, opera,body) ->
         let labend   = newLabel()                       //结束label
         let labbegin = newLabel()                       //设置label 
@@ -218,8 +228,26 @@ let rec cStmt stmt (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : instr 
         let C3 = Label labope :: cExpr opera varEnv funEnv (addINCSP -1 C2)
         let C4 = cStmt body varEnv funEnv C3    
         cExpr dec varEnv funEnv (addINCSP -1 (addJump jumptest  (Label labbegin :: C4) ) )
+    | Forin(dec,i1,i2,body) ->
+        let rec tmp stat =
+                    match stat with
+                    | Access (c) -> c 
+        let rec idx stat =
+                    match stat with
+                    | AccIndex (acc,idx) -> idx
+        let rec address stat =
+                    match stat with
+                    | AccIndex (acc,idx) -> acc
+        match i1 with 
+         | _  -> 
+            let ass = Assign ( dec,i1)
+            let judge =  Prim2("<",Access dec,i2)  
+            let opera = Assign ( dec, Prim2("+",Access dec,CstI 1))
+            cStmt (For (ass,judge,opera,body))  varEnv funEnv  C
+
     | Expr e -> 
       cExpr e varEnv funEnv (addINCSP -1 C) 
+
     | Block stmts -> 
       let rec pass1 stmts ((_, fdepth) as varEnv) =
           match stmts with 
@@ -273,7 +301,18 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                             if b = false then 0
                                         else 1
                            addCST res C   //整数
-    | ConstChar i       -> addCSTC (int i) C   //字符                       
+    | ConstChar i       -> addCSTC (int i) C   //字符      
+    | Hex(s,hex) -> let mutable res = 0;
+                    for i=0 to s.Length-1 do
+                        if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                            res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                        elif s.Chars(i)>='a' && s.Chars(i)<='f' then
+                            res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                        elif s.Chars(i)>='A' && s.Chars(i)<='F' then
+                            res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                        else 
+                            failwith("ERROR WORLD IN NUMBER")  
+                    addCST res C                
     | Addr acc       -> cAccess acc varEnv funEnv C
     | PostInc acc  ->
                   let ass = Assign (acc,Prim2("+",Access acc, e))
@@ -295,9 +334,10 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
       cExpr e1 varEnv funEnv
         (match ope with
         | "%d"  -> PRINTI :: C
-        | "%c"  -> PRINTF :: C
+        | "%c"  -> PRINTC :: C
         | "%f"  -> PRINTF :: C
         )
+    | PrintHex(hex,e1)  -> failwith("Error")
     | Prim1(ope, e1) ->
       cExpr e1 varEnv funEnv
           (match ope with

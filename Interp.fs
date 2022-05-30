@@ -367,6 +367,7 @@ and eval e locEnv gloEnv store : int * store =
         let (res, store2) = eval e locEnv gloEnv store1
         (res, setSto store2 loc res)
     | CstI i -> (i, store)
+    | ConstString s  -> (int(s),store)
     | ConstFloat i -> (System.BitConverter.ToInt32(System.BitConverter.GetBytes(i), 0), store)
     | ConstChar  i -> ((int32) (System.BitConverter.ToInt16(System.BitConverter.GetBytes(char (i)), 0)), store)
     | ConstBool  i -> let res =
@@ -374,6 +375,17 @@ and eval e locEnv gloEnv store : int * store =
                         |true -> 1
                         |false -> 0
                       (res,store)
+    | Hex(s,hex) -> let mutable res = 0;
+                    for i=0 to s.Length-1 do
+                      if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                        res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                      else if s.Chars(i)>='a' && s.Chars(i)<='f' then
+                        res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                      else if s.Chars(i)>='A' && s.Chars(i)<='F' then
+                        res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                      else 
+                        failwith("ERROR WORLD IN NUMBER")
+                    (int res,store)                     
     | Addr acc -> access acc locEnv gloEnv store
     | Print(op,e1)   -> let (i1, store1) = eval e1 locEnv gloEnv store
                         let res = 
@@ -383,6 +395,18 @@ and eval e locEnv gloEnv store : int * store =
                           | "%f"   -> (printf "%f " (System.BitConverter.ToSingle(System.BitConverter.GetBytes(i1),0)) ;i1)
                           | "%s"   -> (printf "%s " (string i1) ;i1 )
                         (res, store1)  
+    | PrintHex(hex,e1)->let (i1, store1) = eval e1 locEnv gloEnv store
+                        let mutable temp = i1
+                        let mutable s  = ""
+                        while temp>0 do
+                           if temp%hex>=0 && temp%hex<=9  then
+                              s <-  ( string ( temp % hex ) ) + s;
+                              temp <- temp/hex;
+                           else if  temp%hex>9  then 
+                              s <-  string ( char ((  temp % hex   )+55) ) + s;
+                              temp <- temp/hex;
+                        printf "%s " s ;
+                        (int s, store1)   
     | PreInc acc -> //前置自增
         let (loc, store1) as res = access acc locEnv gloEnv store 
         let res = getSto store1 loc 

@@ -43,10 +43,10 @@ public class Machine {
                 inputArgs[i-1] = new CubyArrayType(array);
             }
             else if(args[i].contains(".")){
-                inputArgs[i-1] = new CubyFloatType(Float.valueOf(args[i]).floatValue());
+                inputArgs[i-1] = new CubyFloatType(new Float(args[i]).floatValue());
             }
             else {
-                inputArgs[i-1] = new CubyIntType(Integer.valueOf(args[i]).intValue());
+                inputArgs[i-1] = new CubyIntType(new Integer(args[i]).intValue());
             }
         }
 
@@ -161,7 +161,7 @@ public class Machine {
                     }else if (stack[sp] instanceof CubyIntType){
                         result = ((CubyIntType)stack[sp]).getValue();
                     }
-                    stack[sp] = (Float.compare(Float.valueOf(result.toString()), 0.0f) == 0 ? new CubyIntType(1) : new CubyIntType(0));
+                    stack[sp] = (Float.compare(new Float(result.toString()), 0.0f) == 0 ? new CubyIntType(1) : new CubyIntType(0));
                     break;
                 }
                 case Instruction.DUP:
@@ -192,7 +192,7 @@ public class Machine {
                     }else if(stack[index] instanceof CubyFloatType){
                         result = ((CubyFloatType)stack[index]).getValue();
                     }
-                    pc = (Float.compare(Float.valueOf(result.toString()), 0.0f) == 0 ? program.get(pc) : pc + 1);
+                    pc = (Float.compare(new Float(result.toString()), 0.0f) == 0 ? program.get(pc) : pc + 1);
                     break;
                 }
                 case Instruction.IFNZRO: {
@@ -203,13 +203,13 @@ public class Machine {
                     } else if (stack[index] instanceof CubyFloatType) {
                         result = ((CubyFloatType) stack[index]).getValue();
                     }
-                    pc = (Float.compare(Float.valueOf(result.toString()), 0.0f) != 0 ? program.get(pc) : pc + 1);
+                    pc = (Float.compare(new Float(result.toString()), 0.0f) != 0 ? program.get(pc) : pc + 1);
                     break;
                 }
                 case Instruction.CALL: {
                     int argc = program.get(pc++);
                     for (int i=0; i<argc; i++)
-                    stack[sp-i+2] = stack[sp-i];
+                        stack[sp-i+2] = stack[sp-i];
                     stack[sp-argc+1] = new CubyIntType(pc+1); sp++;
                     stack[sp-argc+1] = new CubyIntType(bp);   sp++;
                     bp = sp+1-argc;
@@ -431,7 +431,6 @@ public class Machine {
             case Instruction.THROW:  return "THROW" + program.get(pc+1);
             case Instruction.PUSHHR: return "PUSHHR" + " " + program.get(pc+ 1) + " " + program.get(pc+2) ;
             case Instruction.POPHR: return "POPHR";
-            case Instruction.PRINTF: return "PRINTF";
             default:     return "<unknown>";
         }
     }
@@ -463,7 +462,7 @@ public class Machine {
         tStream.parseNumbers();
         tStream.nextToken();
         while (tStream.ttype == StreamTokenizer.TT_NUMBER) {
-            program.add(Integer.valueOf((int)tStream.nval));
+            program.add(new Integer((int)tStream.nval));
             tStream.nextToken();
         }
 
