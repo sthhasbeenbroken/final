@@ -281,7 +281,14 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                             loop store3
                           else store2  
           loop store0
-
+    | DoWhile(body,e) -> 
+      let rec loop store1 =
+                //求值 循环条件,注意变更环境 store
+              let (v, store2) = eval e locEnv gloEnv store1
+                // 继续循环
+              if v<>0 then loop (exec body locEnv gloEnv store2)
+                      else store2  //退出循环返回 环境store2
+      loop (exec body locEnv gloEnv store)
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store
@@ -300,7 +307,14 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
         loop stmts (locEnv, store)
 
     | Return _ -> failwith "return not implemented" // 解释器没有实现 return
-
+    | DoUntil(body,e) -> 
+      let rec loop store1 =
+              let (v, store2) = eval e locEnv gloEnv store1
+              if v=0 then loop (exec body locEnv gloEnv store2)
+                     else store2    
+      loop (exec body locEnv gloEnv store)
+    | Break -> failwith("break not done")
+    | Continue -> failwith("continue not done")
 and stmtordec stmtordec locEnv gloEnv store =
     match stmtordec with
     | Stmt stmt -> (locEnv, exec stmt locEnv gloEnv store)

@@ -23,7 +23,7 @@ let third  (_, _, c) = c
 %token <float32> CSTFLOAT
 %token <char> CSTCHAR
 
-%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR
+%token CHAR FLOAT ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR DOWHILE DO UNTIL DOUNTIL BREAK CONTINUE
 %token PLUS MINUS TIMES DIV MOD
 %token SELFINC SELFDEC
 %token EQ NE GT LT GE LE BOOL
@@ -148,6 +148,10 @@ StmtM:  /* No unbalanced if-else */
   | IF LPAR Expr RPAR StmtM ELSE StmtM  { If($3, $5, $7)       }
   | WHILE LPAR Expr RPAR StmtM          { While($3, $5)        }
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
+  | DO StmtM WHILE LPAR Expr RPAR SEMI  { DoWhile($2, $5)   }
+  | DO StmtM UNTIL LPAR Expr RPAR SEMI  { DoUntil($2, $5)   }
+  | BREAK SEMI                          { Break             }
+  | CONTINUE SEMI                       { Continue          }
 ;
 
 StmtU:
@@ -183,7 +187,7 @@ ExprNotAccess:
   | Expr LT    Expr                     { Prim2("<",  $1, $3) }
   | Expr GE    Expr                     { Prim2(">=", $1, $3) }
   | Expr LE    Expr                     { Prim2("<=", $1, $3) }
-  | Expr QUE Expr COLON Expr          { Prim3($1, $3, $5)   }
+  | Expr QUE Expr COLON Expr            { Prim3($1, $3, $5)   }
   | Expr SEQAND Expr                    { Andalso($1, $3)     }
   | Expr SEQOR  Expr                    { Orelse($1, $3)      }
 ;

@@ -275,8 +275,22 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                            addCST res C   //整数
     | ConstChar i       -> addCSTC (int i) C   //字符                       
     | Addr acc       -> cAccess acc varEnv funEnv C
-    | PostInc acc    -> let C1 =cAccess acc varEnv funEnv (CSTI 1 :: ADD :: C)
-                        (addINCSP -1 C1)
+    | PostInc acc  ->
+                  let ass = Assign (acc,Prim2("+",Access acc, e))
+                  let C1 = cExpr ass varEnv funEnv C
+                  CSTI 1 :: ADD :: (addINCSP -1 C1)
+    | PostDec acc    -> 
+                    let ass = Assign (acc,Prim2("-",Access acc, e))
+                    let C1 =cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)
+                    (addINCSP -1 C1)
+    | PreInc acc ->
+                let ass = Assign (acc,Prim2("+",Access acc, e))
+                let C1 = cExpr ass varEnv funEnv C
+                CSTI 1 :: ADD :: (addINCSP -1 C1)
+    | PreDec acc ->
+                let ass = Assign (acc,Prim2("-",Access acc, e))
+                let C1 = cExpr ass varEnv funEnv C
+                CSTI 1 :: SUB :: (addINCSP -1 C1)
     | Print(ope,e1)  ->
       cExpr e1 varEnv funEnv
         (match ope with

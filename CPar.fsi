@@ -43,6 +43,12 @@ type token =
   | VOID
   | WHILE
   | FOR
+  | DOWHILE
+  | DO
+  | UNTIL
+  | DOUNTIL
+  | BREAK
+  | CONTINUE
   | CSTCHAR of (char)
   | CSTFLOAT of (float32)
   | CSTSTRING of (string)
@@ -92,6 +98,12 @@ type tokenId =
     | TOKEN_VOID
     | TOKEN_WHILE
     | TOKEN_FOR
+    | TOKEN_DOWHILE
+    | TOKEN_DO
+    | TOKEN_UNTIL
+    | TOKEN_DOUNTIL
+    | TOKEN_BREAK
+    | TOKEN_CONTINUE
     | TOKEN_CSTCHAR
     | TOKEN_CSTFLOAT
     | TOKEN_CSTSTRING
