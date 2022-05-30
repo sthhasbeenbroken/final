@@ -347,8 +347,8 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
               if v=0 then loop (exec body locEnv gloEnv store2)
                      else store2    
       loop (exec body locEnv gloEnv store)
-    | Break -> failwith("break not done")
-    | Continue -> failwith("continue not done")
+    | Break -> failwith("break")
+    | Continue -> failwith("continue")
 and stmtordec stmtordec locEnv gloEnv store =
     match stmtordec with
     | Stmt stmt -> (locEnv, exec stmt locEnv gloEnv store)
