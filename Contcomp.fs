@@ -228,6 +228,25 @@ let rec cStmt stmt (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : instr 
         let C3 = Label labope :: cExpr opera varEnv funEnv (addINCSP -1 C2)
         let C4 = cStmt body varEnv funEnv C3    
         cExpr dec varEnv funEnv (addINCSP -1 (addJump jumptest  (Label labbegin :: C4) ) )
+    | Switch(e,cases)   ->
+        let (labend, C1) = addLabel C
+        let rec everycase c  = 
+            match c with
+            | Case(cond,body) :: tr ->
+                let (labnextbody,labnext,C2) = everycase tr
+                let (label, C3) = addLabel(cStmt body varEnv funEnv (addGOTO labnextbody C2))
+                let (label2, C4) = addLabel( cExpr (Prim2 ("==",e,cond)) varEnv funEnv (IFZERO labnext :: C3))
+                (label,label2,C4)
+            | Default( body ) :: tr -> 
+                let (labnextbody,labnext,C2) = everycase tr
+                let (label, C3) = addLabel(cStmt body varEnv funEnv (addGOTO labnextbody C2))
+                let (label2, C4) = addLabel(cExpr (Prim2 ("==",e,e)) varEnv funEnv (IFZERO labnext :: C3))
+                (label,label2,C4)
+            | [] -> (labend, labend,C1)
+        let (label,label2,C2) = everycase cases
+        C2
+    | Case(cond,body)  ->
+        C
     | Forin(dec,i1,i2,body) ->
         let rec tmp stat =
                     match stat with
@@ -314,18 +333,19 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                             failwith("ERROR WORLD IN NUMBER")  
                     addCST res C                
     | Addr acc       -> cAccess acc varEnv funEnv C
-    | PostInc acc  ->           
-                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)//这边如果是ADD会多输出1
-                (addINCSP 0 C1)//如果是-1会越界
+    (*自增自减编译器报错越界 有误*)
+    | PostInc acc  ->      
+                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: ADD :: C)
+                (addINCSP -1 C1)
     | PostDec acc    -> 
                 let C1 = cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)
-                (addINCSP 0 C1)
+                (addINCSP -1 C1)
     | PreInc acc ->              
                 let C1 = cAccess acc varEnv funEnv C
-                CSTI 1 :: ADD :: (addINCSP 0 C1)
+                CSTI 1 :: ADD :: (addINCSP -1 C1)
     | PreDec acc ->
                 let C1 =  cAccess acc varEnv funEnv C
-                CSTI 1 :: SUB :: (addINCSP 0 C1)
+                CSTI 1 :: SUB :: (addINCSP -1 C1)
     | Print(ope,e1)  ->
       cExpr e1 varEnv funEnv
         (match ope with
