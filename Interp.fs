@@ -321,7 +321,7 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                             let rec loop i stores =
                               match i with 
                               | Access acc2 -> match acc2 with
-                                              | AccIndex(ac2, idx2) ->
+                                                | AccIndex(ac2, idx2) ->
                                                 let ( index,stores2) = eval idx2 locEnv gloEnv stores ;
                                                 if i<>e2 then let (result,s) = eval i locEnv gloEnv stores2
                                                               loop (Access (AccIndex (ac,CstI (index+1)) ) ) (exec body locEnv gloEnv (setSto s loc result) )
