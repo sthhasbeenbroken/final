@@ -41,7 +41,6 @@
 | string   | 3        | 3    | 无法识别非['0'-'9']的字符串                |
 | switch   | 5        | 1    |                                            |
 
-
 | 编译器   | 完善程度 | 难度 | 备注                                               |
 | -------- | -------- | ---- | -------------------------------------------------- |
 | array    | 5        | 1    |                                                    |
@@ -62,9 +61,7 @@
 | string   | 3        | 3    | 无法识别非['0'-'9']的字符串                        |
 | switch   | 5        | 1    |                                                    |
 
-
 ##### 项目说明
-
 
 * 整体文件架构
 
@@ -91,7 +88,6 @@ Contcomp.fs         编译器
 StackMachine.fs            指令定义
 
 microcc.fsproj      编译器项目文件
-
 
 ##### 解释器、优化编译器、虚拟机
 
@@ -194,12 +190,97 @@ int main(){
 
 ![](image/final/1653984846459.png)
 
-   9.dowhile循环
+   9.dowhile循环(可用自增自减)
+
+```c
+int main() {
+    int i;
+    i=0;
+   do {
+        print "%d" i;
+        //i++;//编译时栈溢出
+        i=i+1;
+   }  
+   while(i<4);
+
+}
+```
 
 ![](image/final/1653985045988.png)
 
-  10.dountil循环
+  10.dountil循环(自增自减支持)
+
+```c
+int main() {
+    int i;
+    i=0;
+   do{
+        print "%d" i ;
+        i = i+1;//i++
+   }  
+   until(i>4);
+
+}
+```
 
 ![](image/final/1653985165277.png)
 
-  11.break（break我是直接通过）
+  11.break（break我是直接通过failwith直接跳出，可能不是很体面）
+
+```c
+int main(){
+    int i;
+    i=0;
+   for( i = 0 ; i < 4;  i++){
+        print "%d" i;
+        if(i==2)
+        break;
+    }
+}
+```
+
+![](image/final/1653985643364.png)
+
+12.forin循环(自增自减支持)
+
+```c
+int main() {
+  
+    int i;
+    for i in (3,7)
+    {
+        print "%d" i;
+    }
+
+}
+```
+
+![](image/final/1653985905161.png)
+
+13.hex 16进制输出(不支持'a'-'f','A'-'F'含字符的16进制转换，只支持数字)
+
+```c
+int main() {
+    int a;
+    a = hex("121",16);
+    print 16 a;
+    print "%d" a;
+}
+```
+
+![](image/final/1653986066974.png)
+
+14.prim3三目运算符(如红圈，别忘传入n)
+
+```c
+int main(int n) {
+    int i;
+    i =  n>2?12:21;
+    print "%d" i ;
+  
+}
+```
+
+![](image/final/1653986236012.png)
+
+  15.
