@@ -315,8 +315,8 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                     addCST res C                
     | Addr acc       -> cAccess acc varEnv funEnv C
     | PostInc acc  ->           
-                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: ADD :: C)
-                (addINCSP 0 C1)
+                let C1 = cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)//这边如果是ADD会多输出1
+                (addINCSP 0 C1)//如果是-1会越界
     | PostDec acc    -> 
                 let C1 = cAccess acc varEnv funEnv (CSTI 1 :: SUB :: C)
                 (addINCSP 0 C1)
@@ -324,8 +324,7 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
                 let C1 = cAccess acc varEnv funEnv C
                 CSTI 1 :: ADD :: (addINCSP 0 C1)
     | PreDec acc ->
-                let ass = Assign (acc,Prim2("-",Access acc, e))
-                let C1 = cExpr ass varEnv funEnv C
+                let C1 =  cAccess acc varEnv funEnv C
                 CSTI 1 :: SUB :: (addINCSP 0 C1)
     | Print(ope,e1)  ->
       cExpr e1 varEnv funEnv
